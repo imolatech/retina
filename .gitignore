@@ -1,0 +1,13 @@
+*~
+*.class
+*.swp
+bin
+target
+tmp
+#libs
+build
+dist
+reports
+.DS_Store
+#build.properties
+.hg
