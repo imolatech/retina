@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+paths.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="paths" basedir=".">
+
+    <property name="src.dir" value="src" />
+    <property name="java.src.dir" value="${src.dir}/main/java" />
+    <property name="test.src.dir" value="${src.dir}/test/java" />
+    <property name="resources.dir" value="${src.dir}/main/resources" />
+
+    <property name="libs.dir" value="libs" />
+    <property name="conf.dir" value="conf" />
+    <property name="project.conf.dir" value="${conf.dir}/project" />
+    <property name="libs.dir" value="libs" />
+
+    <property name="tmp.dir" value="tmp" />
+    <property name="build.tmp.dir" value="${tmp.dir}/build" />
+    <property name="dist.tmp.dir" value="${tmp.dir}/dist" />
+    <property name="reports.tmp.dir" value="${tmp.dir}/reports" />
+    <property name="javadoc.tmp.dir" value="${tmp.dir}/javadoc" />
+
+    <path id="build.classpath">
+        <fileset id="build.classpath.jars" dir="${libs.dir}">
+            <include name="compile/*.jar" />
+            <include name="default/*.jar" />
+            <include name="runtime/*.jar" />
+            <include name="test/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="build.support.classpath">
+        <fileset id="build.support.jars" dir="${libs.dir}">
+            <include name="build-support/*.jar" />
+        </fileset>
+    </path>
+
+</project>

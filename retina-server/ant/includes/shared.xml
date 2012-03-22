@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+shared.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="shared" basedir=".">
+
+    <target name="sanity.check" description="Ensures that the basic mandatory properties are set.">
+        <fail unless="module.version" message="Module version is mandatory!" status="1" />
+        <echo message="Module version is set to ${module.version}...FTW!" />
+        <fail unless="java.target.version" message="Java target version is mandatory!" status="1" />
+        <echo message="Java target version is set to ${java.target.version}...FTW!" />
+    </target>
+
+    <target name="clean.tmp" description="Cleans the tmp directory.">
+        <delete dir="${tmp.dir}" />
+    </target>
+
+    <target name="clean.libs" description="Cleans the libs directory.">
+        <delete dir="${libs.dir}" />
+    </target>
+
+    <target name="clean" depends="clean.tmp, clean.libs" description="Cleans the project (removes tmp and libs)." />
+
+    <target name="build" depends="sanity.check, clean.tmp, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
+
+    <target name="test" depends="build, unittest" description="Builds and tests the project." />
+
+</project>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+publish.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="publish" basedir=".">
+
+    <target name="publish.locally" depends="package, ivy.publish.locally" description="Packages and publishes a snapshot to the local ivy cache." />
+
+    <target name="publish.snapshot" depends="package, ivy.publish.snapshot" description="Packages and publishes a snapshot to Artifactory." />
+
+    <target name="publish.milestone" depends="package, ivy.publish.milestone" description="Packages and publishes a milestone to Artifactory." />
+
+    <target name="publish.release" depends="package, ivy.publish.release" description="Packages and publishes a release to Artifactory." />
+
+</project>

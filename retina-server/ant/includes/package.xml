@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+package.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="package" basedir=".">
+
+    <target name="jar.javadoc" description="Produces a jar containing the project's javadoc.">
+        <javadoc destdir="${javadoc.tmp.dir}">
+            <fileset dir="${java.src.dir}">
+                <exclude name="${test.src.dir}/**/*.java" />
+                <exclude name="${resources.dir}/**/*" />
+            </fileset>
+        </javadoc>
+        <jar destfile="${dist.tmp.dir}/${ant.project.name}-javadoc.jar">
+            <fileset dir="${javadoc.tmp.dir}" />
+        </jar>
+    </target>
+
+    <target name="jar.source" description="Produces a jar containing the project's source code.">
+        <jar destfile="${dist.tmp.dir}/${ant.project.name}-source.jar">
+            <fileset dir="${java.src.dir}">
+                <exclude name="${test.src.dir}/**/*.java" />
+                <exclude name="${resources.dir}/**/*" />
+            </fileset>
+        </jar>
+    </target>
+
+    <!--
+        Note: The target "jar" is undefined. Each project is responsible for defining this
+        target since each project can package itself differently from other projects. It is
+        expected (that if the standard directory layout remains the same), the packaging of
+        javadoc and sources should be the same for each project.
+     -->
+
+    <target name="package.jar" depends="build, jar" description="Builds and packages only class and mandatory files." />
+
+    <target name="package.src" depends="build, jar.source" description="Builds and packages only the project's source." />
+
+    <target name="package.javadoc" depends="build, jar.javadoc" description="Builds and packages only the project's javadoc." />
+
+    <target name="package" depends="package.jar, package.src, package.javadoc" description="Packages the project (classes, source, javadoc)." />
+
+</project>

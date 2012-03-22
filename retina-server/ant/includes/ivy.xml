@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ivy.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="ivy" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <property name="ivy.dep.file" value="${project.conf.dir}/ivy.xml" />
+    <property name="ivy.settings.file" value="${project.conf.dir}/ivysettings.xml" />
+    <property name="ivy.reports.dir" value="${reports.tmp.dir}/ivy" />
+
+    <target name="ivy.resolve" unless="skip.resolve" description="Resolves project dependencies.">
+        <ivy:retrieve pattern="${libs.dir}/[conf]/[artifact]-[revision].[ext]" haltonfailure="false" sync="true" />
+    </target>
+
+    <target name="ivy.publish.locally" description="Publishes pregenerated artifact(s) to local ivy cache.">
+        <ivy:publish resolver="local" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
+            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+        </ivy:publish>
+        <echo message="Published ${ant.project.name} with version ${module.version} to the local ivy cache." />
+    </target>
+
+    <target name="ivy.publish.snapshot" description="Publishes pregenerated artifact(s) to the Artifactory Snapshots Repository.">
+        <ivy:publish resolver="artifactory-snapshots" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
+            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+        </ivy:publish>
+        <echo message="Published ${ant.project.name} with version ${module.version} to the Artifactory Snapshots Repository." />
+    </target>
+
+    <target name="ivy.publish.milestone" description="Publishes pregenerated artifact(s) to the Artifactory Milestones Repository.">
+        <ivy:publish resolver="artifactory-milestones" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true" status="milestone">
+            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+        </ivy:publish>
+        <echo message="Published ${ant.project.name} with version ${module.version} to Artifactory Milestone Repository." />
+    </target>
+
+    <target name="ivy.publish.release" description="Publishes pregenerated artifact(s) to the Artifactory Releases Repository.">
+        <ivy:publish resolver="artifactory-releases" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true" status="release">
+            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+        </ivy:publish>
+        <echo message="Published ${ant.project.name} with version ${module.version} to Artifactory Releases Repository." />
+    </target>
+
+    <target name="ivy.clean.local" description="Cleans the local ivy cache.">
+        <delete dir="${user.home}/.ivy2/local" />
+    </target>
+
+    <target name="ivy.report" description="Produces an Ivy Report on all dependencies.">
+        <ivy:report todir="${ivy.reports.dir}" />
+    </target>
+
+</project>

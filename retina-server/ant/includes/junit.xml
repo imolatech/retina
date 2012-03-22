@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+junit.xml
+(c) David Harrigan, 2010.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE project>
+<project name="junit" basedir=".">
+
+    <property name="tests.reports.dir" value="${reports.tmp.dir}/tests" />
+
+    <target name="unittest" unless="skip.test" description="Run all unit tests.">
+        <mkdir dir="${tests.reports.dir}" />
+        <junit printsummary="yes" haltonfailure="no" fork="yes" failureProperty="tests.failed" errorProperty="tests.failed" filtertrace="yes" forkMode="once" maxMemory="256m">
+            <jvmarg value="-Djava.awt.headless=true" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.tmp.dir}/cobertura.ser" />
+            <assertions>
+                <enable />
+            </assertions>
+            <classpath>
+                <path refid="build.classpath" />
+                <path refid="build.support.classpath" />
+                <pathelement location="${instrumented.tmp.dir}" />
+                <pathelement location="${build.tmp.dir}" />
+                <pathelement location="${conf.dir}/override" />
+                <pathelement location="${conf.dir}/logging" />
+                <pathelement location="${conf.dir}/spring" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest todir="${build.tmp.dir}">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport tofile="${tests.reports.dir}/TESTS-TestSuites.xml">
+            <fileset dir="${build.tmp.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${tests.reports.dir}" />
+        </junitreport>
+        <fail message="One or more unit tests have failed!!!" if="tests.failed" />
+    </target>
+
+    <target name="unittest.single" unless="skip.test" description="Run an individual unit test defined as -DClassUnderTest (no need for the .java at the end).">
+        <mkdir dir="${tests.reports.dir}" />
+        <junit printsummary="yes" haltonfailure="no" fork="yes" failureProperty="tests.failed" errorProperty="tests.failed" filtertrace="yes" forkMode="once" maxMemory="256m">
+            <jvmarg value="-Djava.awt.headless=true" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.tmp.dir}/cobertura.ser" />
+            <assertions>
+                <enable />
+            </assertions>
+            <classpath>
+                <path refid="build.classpath" />
+                <path refid="build.support.classpath" />
+                <pathelement location="${instrumented.tmp.dir}" />
+                <pathelement location="${build.tmp.dir}" />
+                <pathelement location="${conf.dir}/override" />
+                <pathelement location="${conf.dir}/logging" />
+                <pathelement location="${conf.dir}/spring" />
+            </classpath>
+            <formatter type="xml" />
+            <batchtest todir="${build.tmp.dir}">
+                <fileset dir="${test.src.dir}">
+                    <include name="**/${test}.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport tofile="${tests.reports.dir}/TESTS-TestSuites.xml">
+            <fileset dir="${build.tmp.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report format="frames" todir="${tests.reports.dir}" />
+        </junitreport>
+        <fail message="One or more unit tests have failed!!!" if="tests.failed" />
+    </target>
+
+</project>
