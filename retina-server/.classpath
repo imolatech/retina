@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="retina-server/src/main/java"/>
 	<classpathentry kind="src" path="retina-server/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?ivyXmlPath=retina-server%2Fconf%2Fproject%2Fivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3Aretina-server%2Fretina-server%2Fconf%2Fproject%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles="/>
 	<classpathentry kind="output" path="retina-server/tmp/build"/>
 </classpath>
