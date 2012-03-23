@@ -31,17 +31,18 @@
     <!-- OPTIONAL TASKS -->
 
     <!-- PROJECT SPECIFIC TASKS -->
-	<manifest file="${dist.tmp.dir}/MANIFEST.MF">
-	  <attribute name="Main-Class"
-	             value="com.imolatech.retina.VersionInfo" />
-	</manifest>
+	
     <target name="jar" description="Produce a jar containing the project's classes and mandatory files.">
-        <jar destfile="${dist.tmp.dir}/${ant.project.name}.jar"
+    	<manifest file="${dist.tmp.dir}/MANIFEST.MF">
+		  <attribute name="Main-Class"
+		             value="com.imolatech.retina.VersionInfo" />
+		</manifest>
+    	<jar destfile="${dist.tmp.dir}/${ant.project.name}.jar"
         	manifest="${dist.tmp.dir}/MANIFEST.MF">
             <fileset dir="${build.tmp.dir}">
                 <patternset refid="no.test.classes"/>
             </fileset>
         </jar>
     </target>
-
+	
 </project>
