@@ -2,7 +2,7 @@
 
 <project name="retina-server" basedir="." default="build">
 
-    <property file="conf/project/build.properties" />
+    <property file="build.properties" />
 
     <!-- BOOTSTRAP -->
 

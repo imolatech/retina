@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-ivy.xml
-(c) David Harrigan, 2010.
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
 <!DOCTYPE project>
 <project name="ivy" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <property name="ivy.dep.file" value="${project.conf.dir}/ivy.xml" />
-    <property name="ivy.settings.file" value="${project.conf.dir}/ivysettings.xml" />
+    <property name="ivy.dep.file" value="ivy.xml" />
+    <property name="ivy.settings.file" value="ivysettings.xml" />
     <property name="ivy.reports.dir" value="${reports.tmp.dir}/ivy" />
 
     <target name="ivy.resolve" unless="skip.resolve" description="Resolves project dependencies.">
