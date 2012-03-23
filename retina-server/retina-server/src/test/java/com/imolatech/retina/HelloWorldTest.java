@@ -15,13 +15,15 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.dharrigan;
+package com.imolatech.retina;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+
+import com.imolatech.retina.HelloWorld;
 
 public class HelloWorldTest {
 
