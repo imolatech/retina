@@ -4,8 +4,11 @@
         <conf name="default"/>
     </configurations>
     <publications>
+    	<artifact name="jWebSocketServer-Bundle-1.0" type="jar" conf="default"/>
+    	<!--  
         <artifact name="jWebSocketCommon-1.0" type="jar" conf="default"/>
         <artifact name="jWebSocketServer-1.0" type="jar" conf="default"/>
         <artifact name="jWebSocketServerAPI-1.0" type="jar" conf="default"/>
+        -->
     </publications>
 </ivy-module>
