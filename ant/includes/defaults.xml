@@ -5,6 +5,6 @@ defaults.xml
 <!DOCTYPE defaults>
 <project name="defaults" basedir=".">
 
-    <property name="organisation" value="com.imolatech.retina" />
+    <property name="organisation" value="imolatech" />
 
 </project>
