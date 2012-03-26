@@ -1,13 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Init a WebSocketServer and also response for initialize a kinect module.
  */
 package com.imolatech.retina;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jwebsocket.api.WebSocketConnector;
@@ -24,7 +21,7 @@ import org.jwebsocket.token.Token;
  *
  * @author Wenhu
  */
-public class JWebSocketClient implements WebSocketServerTokenListener {
+public class WebSocketServer implements WebSocketServerTokenListener {
 
     private TokenServer tokenServer;
     

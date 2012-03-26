@@ -5,7 +5,8 @@
 package com.imolatech.retina;
 
 /**
- *
+ * The main application to start a websocket server.
+ * 
  * @author Wenhu
  */
 public class RetinaServer {
@@ -14,7 +15,7 @@ public class RetinaServer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        JWebSocketClient client = new JWebSocketClient();
+        WebSocketServer client = new WebSocketServer();
         client.init();
         for (int i=0; i<10; i++) {
             sleep();
