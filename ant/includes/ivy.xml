@@ -12,7 +12,7 @@
     </target>
 
     <target name="ivy.publish.locally" description="Publishes pregenerated artifact(s) to local ivy cache.">
-        <ivy:publish resolver="local" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
+        <ivy:publish resolver="local-filesystem-repo" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
             <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
         </ivy:publish>
         <echo message="Published ${ant.project.name} with version ${module.version} to the local ivy cache." />

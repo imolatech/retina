@@ -10,10 +10,15 @@
             <ibiblio name="java-net-maven1" root="http://download.java.net/maven/1" pattern="${java.net.maven.pattern}" m2compatible="false"/>
             <ibiblio name="java-net-maven2" root="http://download.java.net/maven/2/" m2compatible="true"/>
             -->
-            <filesystem name="local">
+            <!-- ivy.default.ivy.user.dir is .ivy2 at your home -->
+            <filesystem name="local-filesystem-repo" checkmodified="true">
+                    <artifact pattern="${ivy.default.ivy.user.dir}/my-snapshots/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+                    <ivy pattern="${ivy.default.ivy.user.dir}/my-snapshots/[organisation]/[module]/[revision]/ivy.xml"/>
+                  </filesystem>
+            <filesystem name="local-third-party-libs">
             	<ivy pattern="${ivy.settings.dir}/repository/[organisation]/[module]/[revision]/ivy.xml" />
             	<artifact pattern="${ivy.settings.dir}/repository/[organisation]/[module]/[revision]/[artifact].[ext]" />
-        	</filesystem>
+        	  </filesystem>
             <!--
             <url name="sourceforge">
                 <artifact pattern="http://easynews.dl.sourceforge.net/sourceforge/[organization]/[module]_[revision].zip" />
