@@ -8,7 +8,7 @@
     <property name="test.src.dir" value="${src.dir}/test/java" />
     <property name="resources.dir" value="${src.dir}/main/resources" />
 
-    <property name="libs.dir" value="libs" />
+    <property name="lib.dir" value="lib" />
     <property name="config.dir" value="config" />
     <property name="repository.dir" value="repository" />
     
@@ -23,7 +23,7 @@
     <property name="app_jar_name" value="${module}-${ivy.deliver.revision}.jar"/>
     
     <path id="build.classpath">
-        <fileset id="build.classpath.jars" dir="${libs.dir}">
+        <fileset id="build.classpath.jars" dir="${lib.dir}">
             <include name="compile/*.jar" />
             <include name="default/*.jar" />
             <include name="runtime/*.jar" />
@@ -32,7 +32,7 @@
     </path>
 
     <path id="build.support.classpath">
-        <fileset id="build.support.jars" dir="${libs.dir}">
+        <fileset id="build.support.jars" dir="${lib.dir}">
             <include name="build-support/*.jar" />
         </fileset>
     </path>

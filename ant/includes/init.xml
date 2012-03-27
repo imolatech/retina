@@ -4,7 +4,7 @@
 <project name="init" basedir=".">
 
     <target name="init">
-        <mkdir dir="${libs.dir}" />
+        <mkdir dir="${lib.dir}" />
         <mkdir dir="${build.tmp.dir}" />
         <mkdir dir="${dist.tmp.dir}" />
         <mkdir dir="${reports.tmp.dir}" />

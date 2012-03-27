@@ -9,10 +9,10 @@
 
   <target name="_deploy" if="targetRootDir">
     <copy todir="${targetRootDir}/lib" >
-      <fileset dir="${libs.dir}/default" erroronmissingdir="false">
+      <fileset dir="${lib.dir}/default" erroronmissingdir="false">
         <include name="*.jar"/>
       </fileset>
-      <fileset dir="${libs.dir}/runtime" erroronmissingdir="false">
+      <fileset dir="${lib.dir}/runtime" erroronmissingdir="false">
         <include name="*.jar"/>
       </fileset>
       <fileset dir="${dist.tmp.dir}">

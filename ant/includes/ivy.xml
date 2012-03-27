@@ -8,7 +8,7 @@
     <property name="ivy.reports.dir" value="${reports.tmp.dir}/ivy" />
 
     <target name="ivy.resolve" unless="skip.resolve" description="Resolves project dependencies.">
-        <ivy:retrieve pattern="${libs.dir}/[conf]/[artifact]-[revision].[ext]" haltonfailure="false" sync="true" />
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" haltonfailure="false" sync="true" />
     </target>
 
     <target name="ivy.publish.locally" description="Publishes pregenerated artifact(s) to local ivy cache.">

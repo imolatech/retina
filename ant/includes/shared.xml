@@ -14,11 +14,11 @@
         <delete dir="${tmp.dir}" />
     </target>
 
-    <target name="clean.libs" description="Cleans the libs directory.">
-        <delete dir="${libs.dir}" />
+    <target name="clean.lib" description="Cleans the libs directory.">
+        <delete dir="${lib.dir}" />
     </target>
 
-    <target name="clean" depends="clean.tmp, clean.libs" description="Cleans the project (removes tmp and libs)." />
+    <target name="clean" depends="clean.tmp, clean.lib" description="Cleans the project (removes tmp and libs)." />
 
     <target name="build" depends="sanity.check, clean.tmp, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
 
