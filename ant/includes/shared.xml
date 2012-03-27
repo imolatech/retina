@@ -9,11 +9,11 @@
         <fail unless="java.target.version" message="Java target version is mandatory!" status="1" />
         <echo message="Java target version is set to ${java.target.version}...FTW!" />
     </target>
-
+    <!-- TODO consider not delete the lib directory when build -->
     <target name="clean" description="Cleans the build directory .">
-        <delete dir="${lib.dir}" />
+        <delete dir="${build.dir}" />
     </target>
-
+    
     <target name="build" depends="sanity.check, clean, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
 
     <target name="test" depends="build, unittest" description="Builds and tests the project." />
