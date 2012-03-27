@@ -5,11 +5,11 @@
 
     <target name="init">
         <mkdir dir="${lib.dir}" />
-        <mkdir dir="${build.tmp.dir}" />
-        <mkdir dir="${dist.tmp.dir}" />
-        <mkdir dir="${reports.tmp.dir}" />
-        <mkdir dir="${javadoc.tmp.dir}" />
-        <mkdir dir="${logs.tmp.dir}"/>
+        <mkdir dir="${build.classes.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${reports.dir}" />
+        <mkdir dir="${javadoc.dir}" />
+        <mkdir dir="${logs.dir}"/>
         <tstamp>
             <format property="build.date" pattern="yyMMddHHmmss" />
         </tstamp>

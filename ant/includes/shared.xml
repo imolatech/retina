@@ -10,17 +10,11 @@
         <echo message="Java target version is set to ${java.target.version}...FTW!" />
     </target>
 
-    <target name="clean.tmp" description="Cleans the tmp directory.">
-        <delete dir="${tmp.dir}" />
-    </target>
-
-    <target name="clean.lib" description="Cleans the libs directory.">
+    <target name="clean" description="Cleans the build directory .">
         <delete dir="${lib.dir}" />
     </target>
 
-    <target name="clean" depends="clean.tmp, clean.lib" description="Cleans the project (removes tmp and libs)." />
-
-    <target name="build" depends="sanity.check, clean.tmp, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
+    <target name="build" depends="sanity.check, clean, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
 
     <target name="test" depends="build, unittest" description="Builds and tests the project." />
 

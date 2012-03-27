@@ -3,34 +3,34 @@
 <!DOCTYPE project>
 <project name="junit" basedir=".">
 
-    <property name="tests.reports.dir" value="${reports.tmp.dir}/tests" />
+    <property name="tests.reports.dir" value="${reports.dir}/tests" />
 
     <target name="unittest" unless="skip.test" description="Run all unit tests.">
         <mkdir dir="${tests.reports.dir}" />
         <junit printsummary="yes" haltonfailure="no" fork="yes" failureProperty="tests.failed" errorProperty="tests.failed" filtertrace="yes" forkMode="once" maxMemory="256m">
             <jvmarg value="-Djava.awt.headless=true" />
-            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.tmp.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.dir}/cobertura.ser" />
             <assertions>
                 <enable />
             </assertions>
             <classpath>
                 <path refid="build.classpath" />
                 <path refid="build.support.classpath" />
-                <pathelement location="${instrumented.tmp.dir}" />
-                <pathelement location="${build.tmp.dir}" />
-                <pathelement location="${conf.dir}/override" />
-                <pathelement location="${conf.dir}/logging" />
-                <pathelement location="${conf.dir}/spring" />
+                <pathelement location="${instrumented.dir}" />
+                <pathelement location="${build.classes.dir}" />
+                <pathelement location="${config.dir}/override" />
+                <pathelement location="${config.dir}/logging" />
+                <pathelement location="${config.dir}/spring" />
             </classpath>
             <formatter type="xml" />
-            <batchtest todir="${build.tmp.dir}">
+            <batchtest todir="${build.classes.dir}">
                 <fileset dir="${test.src.dir}">
                     <include name="**/*Test.java" />
                 </fileset>
             </batchtest>
         </junit>
         <junitreport tofile="${tests.reports.dir}/TESTS-TestSuites.xml">
-            <fileset dir="${build.tmp.dir}">
+            <fileset dir="${build.classes.dir}">
                 <include name="TEST-*.xml" />
             </fileset>
             <report format="frames" todir="${tests.reports.dir}" />
@@ -42,28 +42,28 @@
         <mkdir dir="${tests.reports.dir}" />
         <junit printsummary="yes" haltonfailure="no" fork="yes" failureProperty="tests.failed" errorProperty="tests.failed" filtertrace="yes" forkMode="once" maxMemory="256m">
             <jvmarg value="-Djava.awt.headless=true" />
-            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.tmp.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${instrumented.dir}/cobertura.ser" />
             <assertions>
                 <enable />
             </assertions>
             <classpath>
                 <path refid="build.classpath" />
                 <path refid="build.support.classpath" />
-                <pathelement location="${instrumented.tmp.dir}" />
-                <pathelement location="${build.tmp.dir}" />
-                <pathelement location="${conf.dir}/override" />
-                <pathelement location="${conf.dir}/logging" />
-                <pathelement location="${conf.dir}/spring" />
+                <pathelement location="${instrumented.dir}" />
+                <pathelement location="${build.classes.dir}" />
+                <pathelement location="${config.dir}/override" />
+                <pathelement location="${config.dir}/logging" />
+                <pathelement location="${config.dir}/spring" />
             </classpath>
             <formatter type="xml" />
-            <batchtest todir="${build.tmp.dir}">
+            <batchtest todir="${build.classes.dir}">
                 <fileset dir="${test.src.dir}">
                     <include name="**/${test}.java" />
                 </fileset>
             </batchtest>
         </junit>
         <junitreport tofile="${tests.reports.dir}/TESTS-TestSuites.xml">
-            <fileset dir="${build.tmp.dir}">
+            <fileset dir="${build.classes.dir}">
                 <include name="TEST-*.xml" />
             </fileset>
             <report format="frames" todir="${tests.reports.dir}" />

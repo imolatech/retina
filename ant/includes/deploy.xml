@@ -15,7 +15,7 @@
       <fileset dir="${lib.dir}/runtime" erroronmissingdir="false">
         <include name="*.jar"/>
       </fileset>
-      <fileset dir="${dist.tmp.dir}">
+      <fileset dir="${dist.dir}">
         <include name="${module}.jar"/>
       </fileset>
     </copy>

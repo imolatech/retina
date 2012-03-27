@@ -34,13 +34,13 @@
     <!-- PROJECT SPECIFIC TASKS -->
 	
     <target name="jar" description="Produce a jar containing the project's classes and mandatory files.">
-    	<manifest file="${dist.tmp.dir}/MANIFEST.MF">
+    	<manifest file="${dist.dir}/MANIFEST.MF">
 		    <attribute name="Main-Class"
 		             value="com.imolatech.retina.VersionInfo" />
 		    </manifest>
-    	  <jar destfile="${dist.tmp.dir}/${ant.project.name}.jar"
-        	manifest="${dist.tmp.dir}/MANIFEST.MF">
-            <fileset dir="${build.tmp.dir}">
+    	  <jar destfile="${dist.dir}/${ant.project.name}.jar"
+        	manifest="${dist.dir}/MANIFEST.MF">
+            <fileset dir="${build.classes.dir}">
                 <patternset refid="no.test.classes"/>
             </fileset>
             <fileset dir="${resources.src.dir}" erroronmissingdir="false">
@@ -49,7 +49,7 @@
         </jar>
     </target>
     <path id="classpath.run">
-        <pathelement location="${dist.tmp.dir}/retina-server.jar" />
+        <pathelement location="${dist.dir}/retina-server.jar" />
         <path refid="build.classpath" />
       </path>
 	  <target name="run">

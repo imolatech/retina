@@ -3,15 +3,15 @@
 <!DOCTYPE project>
 <project name="cobertura" basedir=".">
 
-    <property name="coverage.reports.dir" value="${reports.tmp.dir}/coverage" />
-    <property name="instrumented.tmp.dir" value="${tmp.dir}/instrumented" />
+    <property name="coverage.reports.dir" value="${reports.dir}/coverage" />
+    <property name="instrumented.dir" value="${build.dir}/instrumented" />
 
     <target name="cobertura.instrument" unless="skip.cobertura" description="Instrument all class files in preparation for testing with code coverage.">
         <mkdir dir="${coverage.reports.dir}" />
-        <mkdir dir="${instrumented.tmp.dir}" />
+        <mkdir dir="${instrumented.dir}" />
         <taskdef classpathref="build.support.classpath" resource="tasks.properties" />
-        <cobertura-instrument todir="${instrumented.tmp.dir}" datafile="${instrumented.tmp.dir}/cobertura.ser">
-            <fileset dir="${build.tmp.dir}">
+        <cobertura-instrument todir="${instrumented.dir}" datafile="${instrumented.dir}/cobertura.ser">
+            <fileset dir="${build.classes.dir}">
                 <include name="**/*.class" />
                 <exclude name="**/*Test*.class" />
             </fileset>
@@ -20,13 +20,13 @@
 
     <target name="cobertura.check" unless="skip.cobertura" description="Check code coverage against defined levels of branch rate, line rate and so on...">
         <taskdef classpathref="build.support.classpath" resource="tasks.properties" />
-        <cobertura-check datafile="${instrumented.tmp.dir}/cobertura.ser" branchrate="95" linerate="85" totallinerate="85" totalbranchrate="95" haltonfailure="true" />
+        <cobertura-check datafile="${instrumented.dir}/cobertura.ser" branchrate="95" linerate="85" totallinerate="85" totalbranchrate="95" haltonfailure="true" />
     </target>
 
     <target name="cobertura.report" unless="skip.cobertura" description="Generate a coverage report.">
         <taskdef classpathref="build.support.classpath" resource="tasks.properties" />
-        <cobertura-report format="xml" destdir="${coverage.reports.dir}/xml" srcdir="${java.src.dir}" datafile="${instrumented.tmp.dir}/cobertura.ser" />
-        <cobertura-report format="html" destdir="${coverage.reports.dir}/html" srcdir="${java.src.dir}" datafile="${instrumented.tmp.dir}/cobertura.ser" />
+        <cobertura-report format="xml" destdir="${coverage.reports.dir}/xml" srcdir="${java.src.dir}" datafile="${instrumented.dir}/cobertura.ser" />
+        <cobertura-report format="html" destdir="${coverage.reports.dir}/html" srcdir="${java.src.dir}" datafile="${instrumented.dir}/cobertura.ser" />
     </target>
 
     <target name="cobertura" depends="build, cobertura.instrument, unittest, cobertura.report, cobertura.check" description="Tests the project and checks code coverage levels." />

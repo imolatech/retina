@@ -5,7 +5,7 @@
 
     <property name="ivy.dep.file" value="ivy.xml" />
     <property name="ivy.settings.file" value="ivysettings.xml" />
-    <property name="ivy.reports.dir" value="${reports.tmp.dir}/ivy" />
+    <property name="ivy.reports.dir" value="${reports.dir}/ivy" />
 
     <target name="ivy.resolve" unless="skip.resolve" description="Resolves project dependencies.">
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" haltonfailure="false" sync="true" />
@@ -13,28 +13,28 @@
 
     <target name="ivy.publish.locally" description="Publishes pregenerated artifact(s) to local ivy cache.">
         <ivy:publish resolver="local-filesystem-repo" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
-            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+            <artifacts pattern="${dist.dir}/[artifact].[ext]" />
         </ivy:publish>
         <echo message="Published ${ant.project.name} with version ${module.version} to the local ivy cache." />
     </target>
 
     <target name="ivy.publish.snapshot" description="Publishes pregenerated artifact(s) to the Artifactory Snapshots Repository.">
         <ivy:publish resolver="artifactory-snapshots" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true">
-            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+            <artifacts pattern="${dist.dir}/[artifact].[ext]" />
         </ivy:publish>
         <echo message="Published ${ant.project.name} with version ${module.version} to the Artifactory Snapshots Repository." />
     </target>
 
     <target name="ivy.publish.milestone" description="Publishes pregenerated artifact(s) to the Artifactory Milestones Repository.">
         <ivy:publish resolver="artifactory-milestones" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true" status="milestone">
-            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+            <artifacts pattern="${dist.dir}/[artifact].[ext]" />
         </ivy:publish>
         <echo message="Published ${ant.project.name} with version ${module.version} to Artifactory Milestone Repository." />
     </target>
 
     <target name="ivy.publish.release" description="Publishes pregenerated artifact(s) to the Artifactory Releases Repository.">
         <ivy:publish resolver="artifactory-releases" organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" overwrite="true" status="release">
-            <artifacts pattern="${dist.tmp.dir}/[artifact].[ext]" />
+            <artifacts pattern="${dist.dir}/[artifact].[ext]" />
         </ivy:publish>
         <echo message="Published ${ant.project.name} with version ${module.version} to Artifactory Releases Repository." />
     </target>

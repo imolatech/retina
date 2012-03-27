@@ -4,19 +4,19 @@
 <project name="package" basedir=".">
 
     <target name="jar.javadoc" description="Produces a jar containing the project's javadoc.">
-        <javadoc destdir="${javadoc.tmp.dir}">
+        <javadoc destdir="${javadoc.dir}">
             <fileset dir="${java.src.dir}">
                 <exclude name="${test.src.dir}/**/*.java" />
                 <exclude name="${resources.src.dir}/**/*" />
             </fileset>
         </javadoc>
-        <jar destfile="${dist.tmp.dir}/${ant.project.name}-javadoc.jar">
-            <fileset dir="${javadoc.tmp.dir}" />
+        <jar destfile="${dist.dir}/${ant.project.name}-javadoc.jar">
+            <fileset dir="${javadoc.dir}" />
         </jar>
     </target>
 
     <target name="jar.source" description="Produces a jar containing the project's source code.">
-        <jar destfile="${dist.tmp.dir}/${ant.project.name}-source.jar">
+        <jar destfile="${dist.dir}/${ant.project.name}-source.jar">
             <fileset dir="${java.src.dir}">
                 <exclude name="${test.src.dir}/**/*.java" />
                 <exclude name="${resources.src.dir}/**/*" />

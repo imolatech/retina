@@ -9,18 +9,18 @@
     <property name="resources.src.dir" value="${src.dir}/main/resources" />
     <property name="resources.test.dir" value="${src.dir}/test/resources" />
 
-    <property name="lib.dir" value="lib" />
     <property name="config.dir" value="config" />
     <property name="repository.dir" value="repository" />
     
-    <property name="tmp.dir" value="tmp" />
-    <property name="build.tmp.dir" value="${tmp.dir}/build" />
-    <property name="dist.tmp.dir" value="${tmp.dir}/dist" />
-    <property name="reports.tmp.dir" value="${tmp.dir}/reports" />
-    <property name="javadoc.tmp.dir" value="${tmp.dir}/javadoc" />
-    <property name="logs.tmp.dir" location="${tmp.dir}/logs"/>
-    <property name="zip.dir" location="${tmp.dir}/ziptmp"/>
-    <property name="coverage.dir" location="${tmp.dir}/emma"/>
+    <property name="build.dir" value="target" />
+    <property name="lib.dir" value="${build.dir}/lib" />
+    <property name="build.classes.dir" value="${build.dir}/classes" />
+    <property name="dist.dir" value="${build.dir}/dist" />
+    <property name="reports.dir" value="${build.dir}/reports" />
+    <property name="javadoc.dir" value="${build.dir}/javadoc" />
+    <property name="logs.dir" location="${build.dir}/logs"/>
+    <property name="zip.dir" location="${build.dir}/ziptmp"/>
+    <property name="coverage.dir" location="${build.dir}/emma"/>
     <property name="app_jar_name" value="${module}-${ivy.deliver.revision}.jar"/>
     
     <path id="build.classpath">
