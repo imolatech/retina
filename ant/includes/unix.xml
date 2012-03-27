@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="unix-support">
+  <property name="deploy.root" value="${user.home}/imolatech"/>
+</project>

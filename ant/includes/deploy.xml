@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="deploy" basedir=".">
+  <target name="deploy-local" depends="build, jar" description="Deploy the binaries to local directory.">
+    <antcall target="_deploy">
+      <param name="targetRootDir" value="${deploy.dir}"/>
+    </antcall>
+  </target>
+
+  <target name="_deploy" if="targetRootDir">
+    <copy todir="${targetRootDir}/lib" >
+      <fileset dir="${libs.dir}/default" erroronmissingdir="false">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${libs.dir}/runtime" erroronmissingdir="false">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${dist.tmp.dir}">
+        <include name="${module}.jar"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${targetRootDir}/config"/>
+    <copy todir="${targetRootDir}/config" overwrite="${ForceLocalDeploy}">
+      <fileset dir="${config.dir}" erroronmissingdir="false">
+        <include name="**/*"/>
+        <exclude name="jar"/>
+        <exclude name="project"/>
+        <exclude name="project/*" />
+      </fileset>
+    </copy>
+    <fixcrlf srcdir="${targetRootDir}/config" eol="lf" eof="remove" includes="**/*.sh, **/*.xml, **/*.txt, **/*.properties"/>
+    <chmod perm="ugo+rx" dir="${targetRootDir}/config" includes="*.sh"/>
+    
+  </target>
+
+</project>
