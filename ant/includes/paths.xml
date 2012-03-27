@@ -22,7 +22,7 @@
     <property name="zip.dir" location="${build.dir}/ziptmp"/>
     <property name="coverage.dir" location="${build.dir}/emma"/>
     <property name="app_jar_name" value="${module}-${ivy.deliver.revision}.jar"/>
-    
+    <property name="openni.jni.lib" value="${deploy.root}/OpenNI/lib" />
     <path id="build.classpath">
         <fileset id="build.classpath.jars" dir="${lib.dir}">
             <include name="compile/*.jar" />
