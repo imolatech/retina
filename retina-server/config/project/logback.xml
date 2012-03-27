@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration debug="false" scan="true" scanPeriod="60 seconds">
+
+	<!-- include config files here -->
+		
+	<appender class="com.active.services.core.util.AsyncUdpLogger"
+		name="ASYNC_PERF_UDP">
+		<host>235.1.1.120</host>
+		<port>7001</port>
+		<encoder>
+			<pattern>%date{"yyyy-MM-dd HH:mm:ss,SSS"} %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+		<target>System.out</target>
+		<encoder>
+			<pattern>%date[%level] [%logger{0}] [%thread] %message%n</pattern>
+		</encoder>
+	</appender>
+
+
+	<!--Rolling file appender. "target/logs" will be the default location of 
+		logs where app_log_dir is not been provided. Similarly "Test.log" will be 
+		the log name. This is helpful when we run pojo tests from Eclipse or Netbeans. 
+		Otherwise, the startup script will read the log directory name from the service.properties 
+		file. -->
+
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${app_log_dir:-./target/logs}/${appName:-Test}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>${app_log_dir:-./target/logs}/${appName:-Test}.%i.log
+			</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>10</MaxIndex>
+		</rollingPolicy>
+		<TriggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>10MB</MaxFileSize>
+		</TriggeringPolicy>
+		<encoder>
+			<Pattern>%date{"yyyy-MM-dd HH:mm:ss,SSS"} %-5level [%logger{0}][%thread] %message%n</Pattern>
+		</encoder>
+	</appender>
+
+
+	<logger name="com.active">
+		<level value="${log_level}" />
+	</logger>
+	<logger name="com.active.services.core.util.ApplicationConfig">
+		<level value="WARN" />
+	</logger>
+	<logger name="com.active.services.support.heartbeat.FaultToleranceMonitor">
+		<level value="INFO" />
+	</logger>
+	<logger
+		name="com.active.services.support.heartbeat.AsyncHeartbeatMonitorImpl">
+		<level value="INFO" />
+	</logger>
+	<logger name="com.espertech">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.mortbay">
+		<level value="ERROR" />
+	</logger>
+	<logger name="httpclient.wire">
+		<level value="INFO" />
+	</logger>
+	<logger name="java">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.hibernate">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.hibernate.impl.SessionFactoryImpl">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.hibernate.engine.loading.LoadContexts">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache.cxf">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.apache.cxf.phase.PhaseInterceptorChain">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache.cxf.interceptor.LoggingInInterceptor">
+		<level value="INFO" />
+	</logger>
+
+	<logger name="FlexCore.Endpoint">
+		<level value="INFO" />
+	</logger>
+	<logger name="FlexCore.Message">
+		<level value="INFO" />
+	</logger>
+	<logger name="FlexCore.Service">
+		<level value="INFO" />
+	</logger>
+	<!-- not tremendously interested in the INFO level "Channel endpoint amf 
+		received request message." showing up all the time -->
+	<logger name="FlexCore.Endpoint.General">
+		<level value="WARN" />
+	</logger>
+	<logger name="FlexCore.Resource">
+		<level value="ERROR" />
+	</logger>
+	<logger name="FlexCore.Client.FlexClient">
+		<level value="WARN" />
+	</logger>
+	<!-- General Catch All -->
+	<logger name="edu">
+		<level value="INFO" />
+	</logger>
+	<logger name="org">
+		<level value="INFO" />
+	</logger>
+	<logger name="net">
+		<level value="INFO" />
+	</logger>
+	<logger name="com.active.services.core.util.Tracer">
+    	<level value="INFO" />
+		<appender-ref ref="ASYNC_PERF_UDP" />
+	</logger>
+
+	<!-- ======================= -->
+	<!-- Setup the Root category -->
+	<!-- ======================= -->
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>
