@@ -27,7 +27,8 @@
     <import file="${ant.includes.dir}/javac.xml" />
     <import file="${ant.includes.dir}/junit.xml" />
     <import file="${ant.includes.dir}/package.xml" />
-
+    <import file="${ant.includes.dir}/deploy.xml" />
+    
     <!-- OPTIONAL TASKS -->
 
     <!-- PROJECT SPECIFIC TASKS -->
