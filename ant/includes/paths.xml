@@ -6,7 +6,8 @@
     <property name="src.dir" value="src" />
     <property name="java.src.dir" value="${src.dir}/main/java" />
     <property name="test.src.dir" value="${src.dir}/test/java" />
-    <property name="resources.dir" value="${src.dir}/main/resources" />
+    <property name="resources.src.dir" value="${src.dir}/main/resources" />
+    <property name="resources.test.dir" value="${src.dir}/test/resources" />
 
     <property name="lib.dir" value="lib" />
     <property name="config.dir" value="config" />

@@ -7,7 +7,7 @@
         <javadoc destdir="${javadoc.tmp.dir}">
             <fileset dir="${java.src.dir}">
                 <exclude name="${test.src.dir}/**/*.java" />
-                <exclude name="${resources.dir}/**/*" />
+                <exclude name="${resources.src.dir}/**/*" />
             </fileset>
         </javadoc>
         <jar destfile="${dist.tmp.dir}/${ant.project.name}-javadoc.jar">
@@ -19,7 +19,7 @@
         <jar destfile="${dist.tmp.dir}/${ant.project.name}-source.jar">
             <fileset dir="${java.src.dir}">
                 <exclude name="${test.src.dir}/**/*.java" />
-                <exclude name="${resources.dir}/**/*" />
+                <exclude name="${resources.src.dir}/**/*" />
             </fileset>
         </jar>
     </target>

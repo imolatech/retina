@@ -10,7 +10,7 @@
             <classpath refid="build.classpath"/>
             <classpath refid="build.support.classpath"/>
             <include name="**/*.java" />
-            <exclude name="${resources.dir}/**/*" />
+            <exclude name="${resources.src.dir}/**/*" />
         </javac>
     </target>
 
