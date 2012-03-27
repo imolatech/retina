@@ -24,4 +24,8 @@
 
     <target name="test" depends="build, unittest" description="Builds and tests the project." />
 
+    <target name="fullclean" depends="clean" description="Delete classes, generated source and deployment directory">
+      <delete dir="${deploy.dir}"/>
+      <mkdir dir="${deploy.dir}"/>
+    </target>
 </project>

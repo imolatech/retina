@@ -20,11 +20,14 @@
     </publications>
 
     <dependencies>
-		<dependency org="primesense" name="openni" rev="1.5.2.23" conf="default->default"/>
-		<dependency org="jwebsocket" name="jwebsocket" rev="1.0" conf="default->default"/>
-		<dependency org="junit" name="junit" rev="4.10" conf="test->default" />
-        <dependency org="org.hamcrest" name="hamcrest-all" rev="1.1" conf="test->default"/>
-
+		  <dependency org="primesense" name="openni" rev="1.5.2.23" conf="default->default"/>
+  		<dependency org="jwebsocket" name="jwebsocket" rev="1.0" conf="default->default"/>
+  		
+  		<dependency org="commons-lang" name="commons-lang" rev="2.6" transitive="false" conf="default->*,!sources,!javadoc"/>
+  		
+  		<dependency org="junit" name="junit" rev="4.10" conf="test->default" />
+      <dependency org="org.hamcrest" name="hamcrest-all" rev="1.1" conf="test->default"/>
+      <dependency org="org.mockito" name="mockito-core" rev="1.9.0-rc1" conf="test->default"/>
     </dependencies>
 
 </ivy-module>

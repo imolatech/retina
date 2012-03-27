@@ -9,6 +9,7 @@
         <mkdir dir="${dist.tmp.dir}" />
         <mkdir dir="${reports.tmp.dir}" />
         <mkdir dir="${javadoc.tmp.dir}" />
+        <mkdir dir="${logs.tmp.dir}"/>
         <tstamp>
             <format property="build.date" pattern="yyMMddHHmmss" />
         </tstamp>

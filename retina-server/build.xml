@@ -42,6 +42,9 @@
             <fileset dir="${build.tmp.dir}">
                 <patternset refid="no.test.classes"/>
             </fileset>
+            <fileset dir="${resources.dir}" erroronmissingdir="false">
+              <include name="**/*.*"/>
+            </fileset>
         </jar>
     </target>
     <path id="classpath.run">

@@ -6,5 +6,16 @@ defaults.xml
 <project name="defaults" basedir=".">
 
     <property name="organisation" value="imolatech" />
-
+    <property name="module" value="${ant.project.name}"/>
+    <!-- Determine os specific ant file -->
+    <condition property="platform_name" value="windows">
+      <os family="windows"/>
+    </condition>
+    <condition property="platform_name" value="unix">
+      <os family="unix"/>
+    </condition>
+    <import file="${platform_name}.xml" optional="true"/>
+    <!--  This should become local.service.deploy.dir -->
+    <property name="deploy.dir" location="${deploy.root}/${module}"/>
+    
 </project>

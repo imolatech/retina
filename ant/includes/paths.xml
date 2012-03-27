@@ -12,13 +12,14 @@
     <property name="conf.dir" value="conf" />
     <property name="project.conf.dir" value="${conf.dir}/project" />
     <property name="repository.dir" value="repository" />
-
+    
     <property name="tmp.dir" value="tmp" />
     <property name="build.tmp.dir" value="${tmp.dir}/build" />
     <property name="dist.tmp.dir" value="${tmp.dir}/dist" />
     <property name="reports.tmp.dir" value="${tmp.dir}/reports" />
     <property name="javadoc.tmp.dir" value="${tmp.dir}/javadoc" />
-
+    <property name="logs.tmp.dir" location="${tmp.dir}/logs"/>
+    
     <path id="build.classpath">
         <fileset id="build.classpath.jars" dir="${libs.dir}">
             <include name="compile/*.jar" />
@@ -33,5 +34,4 @@
             <include name="build-support/*.jar" />
         </fileset>
     </path>
-
 </project>
