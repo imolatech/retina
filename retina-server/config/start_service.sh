@@ -12,6 +12,8 @@ TEST_SCRIPT=0
 TRACE=0
 JAVA_OPTS=''
 USER_JAVA_OPTS=''
+DEFAULT_MONITORING_SUPPORT_COLLECTD_CLIENT_PATH=/opt/imolatech/collectd-service/junixsocket
+DEFAULT_MONITORING_SUPPORT_COLLECTD_DATA_CHANNEL=udpSender
 
 error() {
   if [ $# -gt 0 ]; then
@@ -32,7 +34,7 @@ error() {
 
 help() {
     echo ""
-    echo "This script reads properties from config/service.properties"
+    echo "This script reads properties from config/system.properties"
     echo "and starts the application"
     echo ""
     sed -n -e '/) \#\#/d' -e '1,/\#\# handle commands/d' \
@@ -220,6 +222,7 @@ tools_path
 APP_NAME=`get_var appName`
 APP_NAME=${APP_NAME}`get_var appInstance`
 HOME_DIR=`get_var homeDir`
+JMX_PORT=`get_var jmxPort`
 LOG_DIR=`get_var logDir`
 LOG_LEVEL=`get_var logLevel`
 MEMORY_SIZE=`get_var memorySize`
@@ -227,19 +230,21 @@ MORE_JAVA_OPTIONS=`get_var moreJavaOptions`
 ENVIRONMENT=`get_var environment`
 JVM_MEMORY_BITS="`get_var_with_default jvm.memory.bits 32`"
 JVM_MEMORY_PERMGEN=`get_var jvm.memory.permgen`
-CLASS_NAME=`get_var appClassName` 
-OPENNI_LIB_DIR=${HOME_DIR}/OpenNI/lib
-
+MONITORING_SUPPORT_ENABLED=`get_var_with_default monitoring.support.enabled false`
+MONITORING_SUPPORT_COLLECTD_CLIENT_PATH=`get_var_with_default monitoring.support.collectd.client.path "$DEFAULT_MONITORING_SUPPORT_COLLECTD_CLIENT_PATH"`
+MONITORING_SUPPORT_COLLECTD_DATA_CHANNEL=`get_var_with_default monitoring.support.collectd.dataChannel "$DEFAULT_MONITORING_SUPPORT_COLLECTD_DATA_CHANNEL"`
 
 # ### END Custom Config ###
 
 if [ $TEST_SCRIPT -eq 1 ]; then
     echo "appName=$APP_NAME"
     echo "homeDir=$HOME_DIR"
+    echo "jmxPort=$JMX_PORT"
     echo "logDir=$LOG_DIR"
     echo "logLevel=$LOG_LEVEL"
     echo "memorySize=$MEMORY_SIZE"
     echo "moreJavaOptions=$MORE_JAVA_OPTIONS"
+    echo "monitoring.support.enabled=$MONITORING_SUPPORT_ENABLED"
 fi
 
 
@@ -249,10 +254,15 @@ JAVA_OPTS="$JAVA_OPTS \
     -Dconfig_dir=${CONFIG_DIR} \
     -Dhome_dir=${HOME_DIR} \
     -Dapp_log_dir=${LOG_DIR} \
-    -Dlog_level=${LOG_LEVEL} \ 
-    -Djava.library.path=${OPENNI_LIB_DIR}
+    -Dlog_level=${LOG_LEVEL} \
+    -Dassembly=assembly.xml \
+    -Duser.timezone=UTC"
 
-# CLASS_NAME="com.active.services.core.server.DefaultServer"
+if [ "$MONITORING_SUPPORT_ENABLED" = "true" -a "$MONITORING_SUPPORT_COLLECTD_DATA_CHANNEL" = "socketSender" ] ; then
+	JAVA_OPTS="$JAVA_OPTS -Djava.library.path=$MONITORING_SUPPORT_COLLECTD_CLIENT_PATH"
+fi
+
+CLASS_NAME="com.imolatech.retina.RetinaServer"
 DEBUG_PORT="5005"
 TRACE_OPTS=""
 
@@ -286,7 +296,7 @@ fi
 
 
 
-CP="${HOME_DIR}/lib/*:${HOME_DIR}/config:${TOOLS_JAR}"
+CP="${HOME_DIR}/lib/*:${HOME_DIR}/jetty/lib/*:${HOME_DIR}/config:${HOME_DIR}/jetty:${TOOLS_JAR}"
 
 GC_LOGGING="-verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -Xloggc:${LOG_DIR}/${APP_NAME}-gc.log"
 
@@ -303,7 +313,10 @@ JAVA_OPTS="${JAVA_OPTS} \
     -Xmx${MEMORY_SIZE} \
     ${PERM_GEN} \
     -Dfile.encoding=UTF-8 \
-    -XX:+HeapDumpOnOutOfMemoryError  
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -Dcom.sun.management.jmxremote.port=${JMX_PORT} \
+    -Dcom.sun.management.jmxremote.authenticate=false \
+    -Dcom.sun.management.jmxremote.ssl=false"
 
 
 if [ $DEBUG -eq 1 ] ; then
@@ -317,12 +330,12 @@ fi
 custom_pre_exec || error "custom_pre_exec failed"
 
 if [ $BACKGROUND -eq 1 ]; then
-    #JAVA_OPTS="${JAVA_OPTS} -Dfnd.console.log.disable=true"
+    JAVA_OPTS="${JAVA_OPTS} -Dfnd.console.log.disable=true"
     $JAVA_HOME/bin/java $TRACE_OPTS $JAVA_OPTS -classpath "$CP" ${GC} ${GC_LOGGING} ${MORE_JAVA_OPTIONS} ${USER_JAVA_OPTS} $CLASS_NAME </dev/null >/dev/null 2>&1 &
     PID=$!
     echo "$PID" >> $PID_FILE
 else
-    #JAVA_OPTS="${JAVA_OPTS} -Dfnd.console.log.disable=false"
+    JAVA_OPTS="${JAVA_OPTS} -Dfnd.console.log.disable=false"
     echo $$ >> $PID_FILE
     exec $JAVA_HOME/bin/java $TRACE_OPTS $JAVA_OPTS -classpath "$CP" ${GC} ${GC_LOGGING} ${MORE_JAVA_OPTIONS} ${USER_JAVA_OPTS} $CLASS_NAME
 fi

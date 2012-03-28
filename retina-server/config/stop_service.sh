@@ -33,5 +33,3 @@ else
     echo "Service already shut down."
     exit 1
 fi
-
-
