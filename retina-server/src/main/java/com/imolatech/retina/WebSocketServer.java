@@ -29,7 +29,7 @@ public class WebSocketServer implements WebSocketServerTokenListener {
         return tokenServer;
     }
     
-    public void init() {
+    public void start() {
         try {
             JWebSocketFactory.start();
             tokenServer = (TokenServer)JWebSocketFactory.getServer("ts0");

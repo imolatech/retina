@@ -4,6 +4,8 @@
  */
 package com.imolatech.retina;
 
+import com.imolatech.retina.kinect.KinectListener;
+
 /**
  * The main application to start a websocket server.
  * 
@@ -15,11 +17,15 @@ public class RetinaServer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        WebSocketServer client = new WebSocketServer();
-        client.init();
+        WebSocketServer server = new WebSocketServer();
+        server.start();
+        KinectListener listener = new KinectListener();
+        if (listener.start()) {
+        	listener.listen();
+        }
         for (int i=0; i<10; i++) {
             sleep();
-            client.pushMessage(String.valueOf(i));
+            server.pushMessage(String.valueOf(i));
         }
     }
     
