@@ -14,21 +14,23 @@ import java.util.*;
 
 import org.OpenNI.*;
 
-public class Skeletons {
+import com.imolatech.retina.Messenger;
 
+public class UserTracker {
+	private Messenger messenger;
 	// OpenNI
-	private UserGenerator userGen;
-	private DepthGenerator depthGen;
+	private UserGenerator userGenerator;
+	private DepthGenerator depthGenerator;
 
 	// OpenNI capabilities used by UserGenerator
-	private SkeletonCapability skelCap;
+	private SkeletonCapability skeletonCapability;
 	// to output skeletal data, including the location of the joints
-	private PoseDetectionCapability poseDetectionCap;
+	private PoseDetectionCapability poseDetectionCapability;
 	// to recognize when the user is in a specific position
 
 	private String calibPoseName = null;
 
-	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkels;
+	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
 
 	// was SkeletonJointTransformation
 	/*
@@ -36,12 +38,12 @@ public class Skeletons {
 	 * joints --> positions (was positions + orientations)
 	 */
 
-	public Skeletons(UserGenerator userGen, DepthGenerator depthGen) {
-		this.userGen = userGen;
-		this.depthGen = depthGen;
-
+	public UserTracker(UserGenerator userGen, DepthGenerator depthGen, Messenger messenger) {
+		this.userGenerator = userGen;
+		this.depthGenerator = depthGen;
+		this.messenger = messenger;
 		configure();
-		userSkels = new HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>>();
+		userSkeletons = new HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>>();
 	} // end of Skeletons()
 
 	/*
@@ -53,27 +55,23 @@ public class Skeletons {
 			// setup UserGenerator pose and skeleton detection capabilities;
 			// should really check these using
 			// ProductionNode.isCapabilitySupported()
-			poseDetectionCap = userGen.getPoseDetectionCapability();
+			poseDetectionCapability = userGenerator.getPoseDetectionCapability();
 
-			skelCap = userGen.getSkeletonCapability();
-			calibPoseName = skelCap.getSkeletonCalibrationPose(); // the 'psi'
-																	// pose
-			skelCap.setSkeletonProfile(SkeletonProfile.ALL);
+			skeletonCapability = userGenerator.getSkeletonCapability();
+			// the 'psi' pose
+			calibPoseName = skeletonCapability.getSkeletonCalibrationPose(); 
+			skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
 			// other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
 
 			// set up four observers
-			userGen.getNewUserEvent().addObserver(new NewUserObserver()); // new
-																			// user
-																			// found
-			userGen.getLostUserEvent().addObserver(new LostUserObserver()); // lost
-																			// a
-																			// user
+			userGenerator.getNewUserEvent().addObserver(new NewUserObserver()); 
+			userGenerator.getLostUserEvent().addObserver(new LostUserObserver()); 
 
-			poseDetectionCap.getPoseDetectedEvent().addObserver(
+			poseDetectionCapability.getPoseDetectedEvent().addObserver(
 					new PoseDetectedObserver());
 			// for when a pose is detected
 
-			skelCap.getCalibrationCompleteEvent().addObserver(
+			skeletonCapability.getCalibrationCompleteEvent().addObserver(
 					new CalibrationCompleteObserver());
 			// for when skeleton calibration is completed, and tracking starts
 		} catch (Exception e) {
@@ -85,46 +83,48 @@ public class Skeletons {
 	// update skeleton of each user
 	public void update() {
 		try {
-			int[] userIDs = userGen.getUsers(); // there may be many users in
-												// the scene
-			for (int i = 0; i < userIDs.length; ++i) {
-				int userID = userIDs[i];
-				if (skelCap.isSkeletonCalibrating(userID))
+			// there may be many users in the scene
+			int[] userIds = userGenerator.getUsers(); 
+			for (int i = 0; i < userIds.length; ++i) {
+				int userId = userIds[i];
+				if (skeletonCapability.isSkeletonCalibrating(userId))
 					continue; // test to avoid occassional crashes with
 								// isSkeletonTracking()
-				if (skelCap.isSkeletonTracking(userID))
-					updateJoints(userID);
+				if (skeletonCapability.isSkeletonTracking(userId))
+					updateJoints(userId);
 			}
+			//now we need to convert userSkeletons to json and send skeleton data to client
+			//messenger.send();
 		} catch (StatusException e) {
 			System.out.println(e);
 		}
 	} // end of update()
 
 	// update all the joints for this userID in userSkels
-	private void updateJoints(int userID) {
-		HashMap<SkeletonJoint, SkeletonJointPosition> skel = userSkels
-				.get(userID);
+	private void updateJoints(int userId) {
+		HashMap<SkeletonJoint, SkeletonJointPosition> skel = userSkeletons
+				.get(userId);
 
-		updateJoint(skel, userID, SkeletonJoint.HEAD);
-		updateJoint(skel, userID, SkeletonJoint.NECK);
+		updateJoint(skel, userId, SkeletonJoint.HEAD);
+		updateJoint(skel, userId, SkeletonJoint.NECK);
 
-		updateJoint(skel, userID, SkeletonJoint.LEFT_SHOULDER);
-		updateJoint(skel, userID, SkeletonJoint.LEFT_ELBOW);
-		updateJoint(skel, userID, SkeletonJoint.LEFT_HAND);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_SHOULDER);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_ELBOW);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_HAND);
 
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_SHOULDER);
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_ELBOW);
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_HAND);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_SHOULDER);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_ELBOW);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_HAND);
 
-		updateJoint(skel, userID, SkeletonJoint.TORSO);
+		updateJoint(skel, userId, SkeletonJoint.TORSO);
 
-		updateJoint(skel, userID, SkeletonJoint.LEFT_HIP);
-		updateJoint(skel, userID, SkeletonJoint.LEFT_KNEE);
-		updateJoint(skel, userID, SkeletonJoint.LEFT_FOOT);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_HIP);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_KNEE);
+		updateJoint(skel, userId, SkeletonJoint.LEFT_FOOT);
 
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_HIP);
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_KNEE);
-		updateJoint(skel, userID, SkeletonJoint.RIGHT_FOOT);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_HIP);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_KNEE);
+		updateJoint(skel, userId, SkeletonJoint.RIGHT_FOOT);
 	} // end of updateJoints()
 
 	/*
@@ -137,18 +137,18 @@ public class Skeletons {
 	 */
 
 	private void updateJoint(
-			HashMap<SkeletonJoint, SkeletonJointPosition> skel, int userID,
+			HashMap<SkeletonJoint, SkeletonJointPosition> skel, int userId,
 			SkeletonJoint joint) {
 		try {
 			// report unavailable joints (should not happen)
-			if (!skelCap.isJointAvailable(joint)
-					|| !skelCap.isJointActive(joint)) {
+			if (!skeletonCapability.isJointAvailable(joint)
+					|| !skeletonCapability.isJointActive(joint)) {
 				System.out.println(joint + " not available for updates");
 				return;
 			}
 
-			SkeletonJointPosition pos = skelCap.getSkeletonJointPosition(
-					userID, joint);
+			SkeletonJointPosition pos = skeletonCapability.getSkeletonJointPosition(
+					userId, joint);
 			if (pos == null) {
 				System.out.println("No update for " + joint);
 				return;
@@ -164,7 +164,7 @@ public class Skeletons {
 			SkeletonJointPosition jPos = null;
 			if (pos.getPosition().getZ() != 0) // has a depth position
 				jPos = new SkeletonJointPosition(
-						depthGen.convertRealWorldToProjective(pos.getPosition()),
+						depthGenerator.convertRealWorldToProjective(pos.getPosition()),
 						pos.getConfidence());
 			else
 				// no info found for that user's joint
@@ -185,12 +185,17 @@ public class Skeletons {
 	class NewUserObserver implements IObserver<UserEventArgs> {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
+			String json = "{\"userId\":\"" + args.getId() + 
+					"\",\"status\":\"" + "NEW" +
+					"\"}";
+			messenger.send(json);
 			System.out.println("Detected new user " + args.getId());
 			try {
 				// try to detect a pose for the new user
-				poseDetectionCap
-						.startPoseDetection(calibPoseName, args.getId()); // big-S
-																			// ?
+				//poseDetectionCapability
+				//		.startPoseDetection(calibPoseName, args.getId()); 
+				//since new openni, we do not need manually calibrate anymore
+				skeletonCapability.requestSkeletonCalibration(args.getId(), false);
 			} catch (StatusException e) {
 				e.printStackTrace();
 			}
@@ -201,7 +206,8 @@ public class Skeletons {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
 			System.out.println("Lost track of user " + args.getId());
-			userSkels.remove(args.getId()); // remove user from userSkels
+			userSkeletons.remove(args.getId()); // remove user from userSkels
+			messenger.send("userId:" + args.getId() + ";status:LOST");
 		}
 	} // end of LostUserObserver inner class
 
@@ -213,8 +219,8 @@ public class Skeletons {
 					+ userID);
 			try {
 				// finished pose detection; switch to skeleton calibration
-				poseDetectionCap.stopPoseDetection(userID); // big-S ?
-				skelCap.requestSkeletonCalibration(userID, true);
+				poseDetectionCapability.stopPoseDetection(userID); // big-S ?
+				skeletonCapability.requestSkeletonCalibration(userID, true);
 			} catch (StatusException e) {
 				e.printStackTrace();
 			}
@@ -233,14 +239,14 @@ public class Skeletons {
 				if (args.getStatus() == CalibrationProgressStatus.OK) {
 					// calibration succeeeded; move to skeleton tracking
 					System.out.println("Starting tracking user " + userID);
-					skelCap.startTracking(userID);
-					userSkels
+					skeletonCapability.startTracking(userID);
+					userSkeletons
 							.put(new Integer(userID),
 									new HashMap<SkeletonJoint, SkeletonJointPosition>());
 					// create new skeleton map for the user in userSkels
 				} else
 					// calibration failed; return to pose detection
-					poseDetectionCap.startPoseDetection(calibPoseName, userID); // big-S
+					poseDetectionCapability.startPoseDetection(calibPoseName, userID); // big-S
 																				// ?
 			} catch (StatusException e) {
 				e.printStackTrace();

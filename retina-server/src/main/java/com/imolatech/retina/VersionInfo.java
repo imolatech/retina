@@ -2,6 +2,7 @@ package com.imolatech.retina;
 
 //VersionInfo.java
 //Print OpenNI version.
+//Just use to test whether openni lib is installed
 
 import org.OpenNI.*;
 
@@ -9,7 +10,7 @@ public class VersionInfo {
 	public static void main(String args[]) {
 		try {
 			Context context = new Context();
-			Version vers = context.getVersion();
+			Version vers = Context.getVersion();
 			System.out.println("OpenNI v." + vers.getMajor() + "."
 					+ vers.getMinor() + "." + vers.getMaintenance() + "."
 					+ vers.getBuild());

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+		<!-- If Google's chrome frame installed, use it! -->
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<title>Compatibility of jQuery jWebSocket plugIn with jQueryMobile</title>   
+
+		<link   rel="stylesheet" href="css/jquery.mobile-v1.0b1.css"/>  
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<script type="text/javascript" src="js/jWebSocket.js"></script>        
+		<script type="text/javascript" src="js/jwsJQueryPlugIn.js"></script>        
+		<script type="text/javascript" src="js/timedemo.js"></script>
+		<script type="text/javascript" src="js/jquery.mobile-v1.0b1.js"></script>
+	</head>
+	<body>
+		<!-- MAIN PAGE       -->
+		<div data-role="page" data-theme="b" id="mainPage" class="type-home">
+			<div data-role="header" data-theme="b">
+				<h1>jQuery Plug-In for jWebSocket<br/>Timestream Demo</h1>
+			</div>
+			<div data-role="content"> 
+				<ul data-role="listview" data-dividertheme="e" data-inset="true" id="users">
+					<li data-role="list-divider">Current time</li>
+					<li id="time"></li>
+				</ul>
+			</div>
+			<div id="logDiv" 
+			 style="position:relative; height:300px; overflow:auto;">
+			</div>
+			<div data-role="footer" style="text-align:center; padding-top:6px; padding-bottom:6px">
+				<h1>Demo</h1>
+    			Status: <label id="status">None</label>
+			</div>
+		</div>
+	</body>
+</html>

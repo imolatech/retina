@@ -384,9 +384,10 @@ public class Skeletons {
 			System.out.println("Detected new user " + args.getId());
 			try {
 				// try to detect a pose for the new user
-				poseDetectionCap
-						.startPoseDetection(calibPoseName, args.getId()); // big-S
+				//poseDetectionCap
+				//		.startPoseDetection(calibPoseName, args.getId()); // big-S
 																			// ?
+				skelCap.requestSkeletonCalibration(args.getId(), false);
 			} catch (StatusException e) {
 				e.printStackTrace();
 			}

@@ -7,23 +7,27 @@ package com.imolatech.retina;
 import com.imolatech.retina.kinect.KinectListener;
 
 /**
- * The main application to start a websocket server.
+ * The main application to start a websocket server and 
+ * listen on kinect sensor data.
+ * Note: the kinect must be connected before this app started.
+ * Future enhance: 
+ * 1. Detect the connectivity of Kinect Sensor
+ * 2. A timer will simulate kinect events if passing a parameter or
+ *    by getting a flag from service.property file so that we could
+ *    test our client without even connecting a connect sensor.
  * 
  * @author Wenhu
  */
 public class RetinaServer {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         WebSocketServer server = new WebSocketServer();
         server.start();
-        KinectListener listener = new KinectListener();
+        KinectListener listener = new KinectListener(server);
         if (listener.start()) {
         	listener.listen();
         }
-        for (int i=0; i<10; i++) {
+        //simulate server messages
+        for (int i=0; i<3; i++) {
             sleep();
             server.pushMessage(String.valueOf(i));
         }

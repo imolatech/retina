@@ -21,7 +21,7 @@ import org.jwebsocket.token.Token;
  *
  * @author Wenhu
  */
-public class WebSocketServer implements WebSocketServerTokenListener {
+public class WebSocketServer implements WebSocketServerTokenListener, Messenger {
 
     private TokenServer tokenServer;
     
@@ -62,8 +62,19 @@ public class WebSocketServer implements WebSocketServerTokenListener {
     	System.out.println("process closed.");
     }
     
+    //suppose message coming in is in json format
+    public void send(String message) {
+    	Map<String, WebSocketConnector> connectorMap = getTokenServer().getAllConnectors();
+    	Collection<WebSocketConnector> connectors = connectorMap.values();
+    	
+    	for (WebSocketConnector connector : connectors) {
+    		WebSocketPacket wsPacket = new RawPacket(message);
+        	getTokenServer().sendPacket(connector, wsPacket);
+    	}
+    }
+    
     public void pushMessage(String message) {
-    	Map connectorMap = getTokenServer().getAllConnectors();
+    	Map<String, WebSocketConnector>  connectorMap = getTokenServer().getAllConnectors();
     	Collection<WebSocketConnector> connectors = connectorMap.values();
     	
     	for (WebSocketConnector connector : connectors) {

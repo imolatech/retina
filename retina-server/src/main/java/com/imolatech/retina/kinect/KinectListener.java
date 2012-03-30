@@ -3,12 +3,19 @@ package com.imolatech.retina.kinect;
 
 import org.OpenNI.*;
 
+import com.imolatech.retina.Messenger;
+
 public class KinectListener implements Runnable {
 	private volatile boolean isRunning;
 	private Context context;
-	private Skeletons skels; // the users' skeletons
+	//tracking users and their skeletons
+	private UserTracker userTracker; 
 	private long totalTime = 0;
+	private Messenger messenger;
 	
+	public KinectListener(Messenger messenger) {
+		this.messenger = messenger;
+	}
 	public boolean start() {
 		try {
 			configOpenNI();
@@ -35,16 +42,16 @@ public class KinectListener implements Runnable {
 					"0KOIk2JeIBYClPWVnMoRKn5cdY4="); // vendor, key
 			context.addLicense(license);
 
-			DepthGenerator depthGen = DepthGenerator.create(context);
+			DepthGenerator depthGenerator = DepthGenerator.create(context);
 			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); // xRes,
 																		// yRes,
 																		// FPS
-			depthGen.setMapOutputMode(mapMode);
+			depthGenerator.setMapOutputMode(mapMode);
 
 			context.setGlobalMirror(true); // set mirror mode
-			UserGenerator userGen = UserGenerator.create(context);
+			UserGenerator userGenerator = UserGenerator.create(context);
 			
-			skels = new Skeletons(userGen, depthGen);
+			userTracker = new UserTracker(userGenerator, depthGenerator, messenger);
 
 			context.startGeneratingAll();
 			System.out.println("Started context generating...");
@@ -70,7 +77,7 @@ public class KinectListener implements Runnable {
 				return;
 			}
 			long startTime = System.currentTimeMillis();
-			skels.update();
+			userTracker.update();
 			totalTime += (System.currentTimeMillis() - startTime);
 		}
 		// close down
