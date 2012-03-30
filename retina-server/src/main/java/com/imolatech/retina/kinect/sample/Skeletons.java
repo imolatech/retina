@@ -385,7 +385,7 @@ public class Skeletons {
 			try {
 				// try to detect a pose for the new user
 				poseDetectionCap
-						.StartPoseDetection(calibPoseName, args.getId()); // big-S
+						.startPoseDetection(calibPoseName, args.getId()); // big-S
 																			// ?
 			} catch (StatusException e) {
 				e.printStackTrace();
@@ -409,7 +409,7 @@ public class Skeletons {
 					+ userID);
 			try {
 				// finished pose detection; switch to skeleton calibration
-				poseDetectionCap.StopPoseDetection(userID); // big-S ?
+				poseDetectionCap.stopPoseDetection(userID); // big-S ?
 				skelCap.requestSkeletonCalibration(userID, true);
 			} catch (StatusException e) {
 				e.printStackTrace();
@@ -436,7 +436,7 @@ public class Skeletons {
 					// create new skeleton map for the user in userSkels
 				} else
 					// calibration failed; return to pose detection
-					poseDetectionCap.StartPoseDetection(calibPoseName, userID); // big-S
+					poseDetectionCap.startPoseDetection(calibPoseName, userID); // big-S
 																				// ?
 			} catch (StatusException e) {
 				e.printStackTrace();

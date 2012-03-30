@@ -10,15 +10,15 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.image.*;
 import java.text.DecimalFormat;
-import java.io.*;
-import javax.imageio.*;
-import java.util.*;
 
 import org.OpenNI.*;
 
 import java.nio.ShortBuffer;
 
 public class ViewerPanelV1 extends JPanel implements Runnable {
+	
+	private static final long serialVersionUID = 1L;
+
 	private static final int MAX_DEPTH_SIZE = 10000;
 
 	private static final String SAMPLE_XML_FILE = "./SamplesConfig.xml";
