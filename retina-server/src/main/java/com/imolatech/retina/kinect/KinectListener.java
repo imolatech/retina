@@ -2,10 +2,13 @@ package com.imolatech.retina.kinect;
 
 
 import org.OpenNI.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.imolatech.retina.Messenger;
 
 public class KinectListener implements Runnable {
+	private static final Logger logger = LoggerFactory.getLogger(KinectListener.class);
 	private volatile boolean isRunning;
 	private Context context;
 	//tracking users and their skeletons
@@ -20,13 +23,15 @@ public class KinectListener implements Runnable {
 		try {
 			configOpenNI();
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.warn("Kinect configuration errror.", e);
 			return false;
 		}
+		logger.info("Kinect connected.");
 		return true;
 	} 
 
 	public void listen() {
+		logger.info("Start to listen on Kinect sensor.");
 		new Thread(this).start(); 
 	}
 	/*
@@ -43,9 +48,8 @@ public class KinectListener implements Runnable {
 			context.addLicense(license);
 
 			DepthGenerator depthGenerator = DepthGenerator.create(context);
-			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); // xRes,
-																		// yRes,
-																		// FPS
+			// xRes, yRes and FPS
+			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); 
 			depthGenerator.setMapOutputMode(mapMode);
 
 			context.setGlobalMirror(true); // set mirror mode
@@ -54,7 +58,7 @@ public class KinectListener implements Runnable {
 			userTracker = new UserTracker(userGenerator, depthGenerator, messenger);
 
 			context.startGeneratingAll();
-			System.out.println("Started context generating...");
+			logger.info("Started context generating...");
 		
 	} // end of configOpenNI()
 
@@ -63,6 +67,7 @@ public class KinectListener implements Runnable {
 	}
 
 	public void stop() {
+		logger.info("Make Kinect Listener stop.");
 		isRunning = false;
 	}
 	
@@ -80,10 +85,12 @@ public class KinectListener implements Runnable {
 			userTracker.update();
 			totalTime += (System.currentTimeMillis() - startTime);
 		}
+		logger.info("Stop generating Kinect data");
 		// close down
 		try {
 			context.stopGeneratingAll();
 		} catch (StatusException e) {
+			logger.warn("Stop Kinect error.", e);
 		}
 		context.release();
 		

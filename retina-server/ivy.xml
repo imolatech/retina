@@ -1,33 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+<ivy-module version="2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-    <info organisation="${organisation}" module="${ant.project.name}" revision="${module.version}" />
+	<info organisation="${organisation}" module="${ant.project.name}"
+		revision="${module.version}" />
 
-    <configurations>
-        <conf name="default" />
-        <conf name="runtime" />
-        <conf name="sources" />
-        <conf name="javadoc" />
-        <conf name="test" visibility="private" />
-        <conf name="build-support" visibility="private" />
-    </configurations>
+	<configurations>
+		<conf name="default" />
+		<conf name="runtime" />
+		<conf name="sources" />
+		<conf name="javadoc" />
+		<conf name="test" visibility="private" />
+		<conf name="build-support" visibility="private" />
+	</configurations>
 
-    <publications>
-        <artifact name="${ant.project.name}" type="jar" conf="default" />
-        <artifact name="${ant.project.name}-source" type="source" ext="jar" conf="sources" />
-        <artifact name="${ant.project.name}-javadoc" type="javadoc" ext="jar" conf="javadoc" />
-    </publications>
+	<publications>
+		<artifact name="${ant.project.name}" type="jar" conf="default" />
+		<artifact name="${ant.project.name}-source" type="source"
+			ext="jar" conf="sources" />
+		<artifact name="${ant.project.name}-javadoc" type="javadoc"
+			ext="jar" conf="javadoc" />
+	</publications>
 
-    <dependencies>
-		  <dependency org="primesense" name="openni" rev="1.5.2.23" conf="default->default"/>
-  		<dependency org="jwebsocket" name="jwebsocket" rev="1.0" conf="default->default"/>
-  		
-  		<dependency org="commons-lang" name="commons-lang" rev="2.6" transitive="false" conf="default->*,!sources,!javadoc"/>
-  		
-  		<dependency org="junit" name="junit" rev="4.10" conf="test->default" />
-      <dependency org="org.hamcrest" name="hamcrest-all" rev="1.1" conf="test->default"/>
-      <dependency org="org.mockito" name="mockito-core" rev="1.9.0-rc1" conf="test->default"/>
-    </dependencies>
+	<dependencies>
+		<dependency org="primesense" name="openni" rev="1.5.2.23"
+			conf="default->default" />
+		<dependency org="jwebsocket" name="jwebsocket" rev="1.0"
+			conf="default->default" />
+
+		<dependency org="commons-lang" name="commons-lang" rev="2.6"
+			transitive="false" conf="default->*,!sources,!javadoc" />
+		<dependency org="org.slf4j" name="slf4j-api" rev="1.6.4"
+			conf="default->default" />
+		<dependency org="ch.qos.logback" name="logback-core" rev="1.0.1"
+			conf="default->default" />
+
+		<dependency org="ch.qos.logback" name="logback-classic"
+			rev="1.0.1" conf="default->default" />
+		<dependency org="com.google.code.gson" name="gson" rev="2.1"
+			conf="default->default" />
+
+		<dependency org="junit" name="junit" rev="4.10" conf="test->default" />
+		<dependency org="org.hamcrest" name="hamcrest-all" rev="1.1"
+			conf="test->default" />
+		<dependency org="org.mockito" name="mockito-core" rev="1.9.0-rc1"
+			conf="test->default" />
+	</dependencies>
 
 </ivy-module>

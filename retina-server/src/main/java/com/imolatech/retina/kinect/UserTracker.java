@@ -13,10 +13,15 @@ package com.imolatech.retina.kinect;
 import java.util.*;
 
 import org.OpenNI.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.imolatech.retina.Messenger;
+import com.imolatech.retina.kinect.serializer.MotionDataSerializer;
+import com.imolatech.retina.kinect.serializer.NewUserSerializer;
 
 public class UserTracker {
+	private static final Logger logger = LoggerFactory.getLogger(UserTracker.class);
 	private Messenger messenger;
 	// OpenNI
 	private UserGenerator userGenerator;
@@ -75,7 +80,7 @@ public class UserTracker {
 					new CalibrationCompleteObserver());
 			// for when skeleton calibration is completed, and tracking starts
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.warn("Error in configuration.", e);
 		}
 	} // end of configure()
 
@@ -96,7 +101,7 @@ public class UserTracker {
 			//now we need to convert userSkeletons to json and send skeleton data to client
 			//messenger.send();
 		} catch (StatusException e) {
-			System.out.println(e);
+			logger.warn("Error while receiving data from kinect.", e);
 		}
 	} // end of update()
 
@@ -143,14 +148,14 @@ public class UserTracker {
 			// report unavailable joints (should not happen)
 			if (!skeletonCapability.isJointAvailable(joint)
 					|| !skeletonCapability.isJointActive(joint)) {
-				System.out.println(joint + " not available for updates");
+				logger.debug("{} not available for updates", joint);
 				return;
 			}
 
 			SkeletonJointPosition pos = skeletonCapability.getSkeletonJointPosition(
 					userId, joint);
 			if (pos == null) {
-				System.out.println("No update for " + joint);
+				logger.debug("No update for {}", joint);
 				return;
 			}
 
@@ -171,7 +176,7 @@ public class UserTracker {
 				jPos = new SkeletonJointPosition(new Point3D(), 0);
 			skel.put(joint, jPos);
 		} catch (StatusException e) {
-			System.out.println(e);
+			logger.warn("Error while recieving skeleton data.", e);
 		}
 	} // end of updateJoint()
 
@@ -185,11 +190,10 @@ public class UserTracker {
 	class NewUserObserver implements IObserver<UserEventArgs> {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
-			String json = "{\"userId\":\"" + args.getId() + 
-					"\",\"status\":\"" + "NEW" +
-					"\"}";
-			messenger.send(json);
-			System.out.println("Detected new user " + args.getId());
+			MotionDataSerializer serializer = new NewUserSerializer(args.getId());
+			
+			messenger.send(serializer.toJson());
+			logger.debug("Detected new user {}", args.getId());
 			try {
 				// try to detect a pose for the new user
 				//poseDetectionCapability
@@ -197,7 +201,7 @@ public class UserTracker {
 				//since new openni, we do not need manually calibrate anymore
 				skeletonCapability.requestSkeletonCalibration(args.getId(), false);
 			} catch (StatusException e) {
-				e.printStackTrace();
+				logger.warn("Error while requesting calibration.", e);
 			}
 		}
 	} // end of NewUserObserver inner class
@@ -205,9 +209,10 @@ public class UserTracker {
 	class LostUserObserver implements IObserver<UserEventArgs> {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
-			System.out.println("Lost track of user " + args.getId());
+			logger.debug("Lost track of user {}", args.getId());
 			userSkeletons.remove(args.getId()); // remove user from userSkels
-			messenger.send("userId:" + args.getId() + ";status:LOST");
+			MotionDataSerializer serializer = new NewUserSerializer(args.getId());
+			messenger.send(serializer.toJson());
 		}
 	} // end of LostUserObserver inner class
 
@@ -215,14 +220,13 @@ public class UserTracker {
 		public void update(IObservable<PoseDetectionEventArgs> observable,
 				PoseDetectionEventArgs args) {
 			int userID = args.getUser();
-			System.out.println(args.getPose() + " pose detected for user "
-					+ userID);
+			logger.debug("{} pose detected for user {}", args.getPose(),userID);
 			try {
 				// finished pose detection; switch to skeleton calibration
 				poseDetectionCapability.stopPoseDetection(userID); // big-S ?
 				skeletonCapability.requestSkeletonCalibration(userID, true);
 			} catch (StatusException e) {
-				e.printStackTrace();
+				logger.warn("Error while detecting pose.", e);
 			}
 		}
 	} // end of PoseDetectedObserver inner class
@@ -233,12 +237,11 @@ public class UserTracker {
 				IObservable<CalibrationProgressEventArgs> observable,
 				CalibrationProgressEventArgs args) {
 			int userID = args.getUser();
-			System.out.println("Calibration status: " + args.getStatus()
-					+ " for user " + userID);
+			logger.debug("Calibration status: {} for user {}",args.getStatus(), userID);
 			try {
 				if (args.getStatus() == CalibrationProgressStatus.OK) {
 					// calibration succeeeded; move to skeleton tracking
-					System.out.println("Starting tracking user " + userID);
+					logger.debug("Starting to track user {}", userID);
 					skeletonCapability.startTracking(userID);
 					userSkeletons
 							.put(new Integer(userID),
@@ -249,7 +252,7 @@ public class UserTracker {
 					poseDetectionCapability.startPoseDetection(calibPoseName, userID); // big-S
 																				// ?
 			} catch (StatusException e) {
-				e.printStackTrace();
+				logger.warn("Error while completing calibration.", e);
 			}
 		}
 	} // end of CalibrationCompleteObserver inner class

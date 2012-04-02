@@ -16,13 +16,15 @@ import org.jwebsocket.listener.WebSocketServerTokenEvent;
 import org.jwebsocket.listener.WebSocketServerTokenListener;
 import org.jwebsocket.server.TokenServer;
 import org.jwebsocket.token.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Wenhu
  */
 public class WebSocketServer implements WebSocketServerTokenListener, Messenger {
-
+	private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private TokenServer tokenServer;
     
     public TokenServer getTokenServer() {
@@ -44,22 +46,22 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
     }
     @Override
     public void processToken(WebSocketServerTokenEvent wsste, Token token) {
-        System.out.println("got token " + token.toString());
+        logger.debug("got token {}", token.toString());
     }
 
     @Override
     public void processOpened(WebSocketServerEvent wsse) {
-    	System.out.println("process opened.");
+    	logger.debug("process opened.");
     }
 
     @Override
     public void processPacket(WebSocketServerEvent wsse, WebSocketPacket wsp) {
-    	System.out.println("process packet.");
+    	logger.debug("process packet.");
     }
 
     @Override
     public void processClosed(WebSocketServerEvent wsse) {
-    	System.out.println("process closed.");
+    	logger.debug("process closed.");
     }
     
     //suppose message coming in is in json format
@@ -99,7 +101,7 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
 				"\",\"username\":\"" + item.get("username") +
 				"\",\"message\":\"" + item.get("message") +
 				"\"}";
-		System.out.println("Send message as following:" + json);
+		logger.debug("Send message as following:" + json);
 		return json;
 	}
 }
