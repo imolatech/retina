@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.jwebsocket.api.WebSocketConnector;
 import org.jwebsocket.api.WebSocketPacket;
 import org.jwebsocket.factory.JWebSocketFactory;
@@ -66,6 +67,7 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
     
     //suppose message coming in is in json format
     public void send(String message) {
+    	if (StringUtils.isBlank(message)) return;
     	Map<String, WebSocketConnector> connectorMap = getTokenServer().getAllConnectors();
     	Collection<WebSocketConnector> connectors = connectorMap.values();
     	

@@ -1,5 +1,10 @@
 package com.imolatech.retina.kinect.serializer;
 
+import java.util.Date;
+
+import com.google.gson.Gson;
+import com.imolatech.retina.kinect.message.UserOutMessage;
+
 /**
  * Convert a new user in event to a json protocol 
  * which client could understand. See protocol document
@@ -13,10 +18,10 @@ public class LostUserSerializer implements MotionDataSerializer {
 	@Override
 	public String toJson() {
 		if (userId == null) return null;
-		String json = "{\"userId\":\"" + userId + 
-				"\",\"status\":\"" + "LOST" +
-				"\"}";
-		return json;
+		UserOutMessage message = new UserOutMessage(userId);
+		message.setTimestamp((new Date()).getTime());
+		Gson gson = new Gson();
+		return gson.toJson(message);
 	}
 	
 }
