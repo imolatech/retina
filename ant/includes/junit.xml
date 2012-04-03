@@ -14,16 +14,16 @@
                 <enable />
             </assertions>
             <classpath>
-                <path refid="build.classpath" />
-                <path refid="build.support.classpath" />
+                <path refid="classpath.build.test" />
                 <pathelement location="${instrumented.dir}" />
                 <pathelement location="${build.classes.dir}" />
+                <pathelement location="${test.classes.dir}" />
                 <pathelement location="${config.dir}/override" />
                 <pathelement location="${config.dir}/logging" />
                 <pathelement location="${config.dir}/spring" />
             </classpath>
             <formatter type="xml" />
-            <batchtest todir="${build.classes.dir}">
+            <batchtest todir="${test.classes.dir}">
                 <fileset dir="${test.src.dir}">
                     <include name="**/*Test.java" />
                 </fileset>
@@ -47,10 +47,10 @@
                 <enable />
             </assertions>
             <classpath>
-                <path refid="build.classpath" />
-                <path refid="build.support.classpath" />
+                <path refid="classpath.build.test" />
                 <pathelement location="${instrumented.dir}" />
                 <pathelement location="${build.classes.dir}" />
+                <pathelement location="${test.classes.dir}" />
                 <pathelement location="${config.dir}/override" />
                 <pathelement location="${config.dir}/logging" />
                 <pathelement location="${config.dir}/spring" />

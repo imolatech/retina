@@ -15,6 +15,7 @@
     <property name="build.dir" value="target" />
     <property name="lib.dir" value="${build.dir}/lib" />
     <property name="build.classes.dir" value="${build.dir}/classes" />
+    <property name="test.classes.dir" value="${build.dir}/test-classes" />
     <property name="dist.dir" value="${build.dir}/dist" />
     <property name="reports.dir" value="${build.dir}/reports" />
     <property name="javadoc.dir" value="${build.dir}/javadoc" />
@@ -23,6 +24,8 @@
     <property name="coverage.dir" location="${build.dir}/emma"/>
     <property name="app_jar_name" value="${module}-${ivy.deliver.revision}.jar"/>
     <property name="openni.jni.lib" value="${deploy.root}/OpenNI/lib" />
+    
+    
     <path id="build.classpath">
         <fileset id="build.classpath.jars" dir="${lib.dir}">
             <include name="compile/*.jar" />

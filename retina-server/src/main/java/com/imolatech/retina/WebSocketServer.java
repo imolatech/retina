@@ -34,15 +34,16 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
     
     public void start() {
         try {
+        	logger.debug("Start websocket server...");
             JWebSocketFactory.start();
             tokenServer = (TokenServer)JWebSocketFactory.getServer("ts0");
             if (tokenServer != null) {
                 tokenServer.addListener(this);
             } else {
-                System.out.println("Cannot find token server");
+                logger.error("Cannot find token server");
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            logger.error("Error when starting websocket server.", e);
         }
     }
     @Override

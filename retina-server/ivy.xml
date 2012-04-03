@@ -25,13 +25,6 @@
 	</publications>
 
 	<dependencies>
-		<dependency org="primesense" name="openni" rev="1.5.2.23"
-			conf="default->default" />
-		<dependency org="jwebsocket" name="jwebsocket" rev="1.0"
-			conf="default->default" />
-
-		<dependency org="commons-lang" name="commons-lang" rev="2.6"
-			transitive="false" conf="default->*,!sources,!javadoc" />
 		<dependency org="org.slf4j" name="slf4j-api" rev="1.6.4"
 			conf="default->default" />
 		<dependency org="ch.qos.logback" name="logback-core" rev="1.0.1"
@@ -39,6 +32,18 @@
 
 		<dependency org="ch.qos.logback" name="logback-classic"
 			rev="1.0.1" conf="default->default" />
+		
+		<dependency org="primesense" name="openni" rev="1.5.2.23"
+			conf="default->default" />
+		<dependency org="jwebsocket" name="jwebsocket" rev="1.0"
+			conf="default->default" >
+			<exclude org="org.slf4j" name="slf4j-api"/>
+			<exclude org="org.slf4j" name="slf4j-log4j12"/>
+		</dependency>
+
+		<dependency org="commons-lang" name="commons-lang" rev="2.6"
+			transitive="false" conf="default->*,!sources,!javadoc" />
+				     
 		<dependency org="com.google.code.gson" name="gson" rev="2.1"
 			conf="default->default" />
 

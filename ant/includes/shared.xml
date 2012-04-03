@@ -14,7 +14,7 @@
         <delete dir="${build.dir}" />
     </target>
     
-    <target name="build" depends="sanity.check, clean, init, ivy.resolve, javac" description="Resolves dependencies and compiles the project." />
+    <target name="build" depends="sanity.check, clean, init, ivy.resolve, _build, _build-tests" description="Resolves dependencies and compiles the project." />
 
     <target name="test" depends="build, unittest" description="Builds and tests the project." />
 

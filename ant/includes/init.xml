@@ -3,9 +3,10 @@
 <!DOCTYPE project>
 <project name="init" basedir=".">
 
-    <target name="init">
+    <target name="init" depends="-classpath-init">
         <mkdir dir="${lib.dir}" />
         <mkdir dir="${build.classes.dir}" />
+        <mkdir dir="${test.classes.dir}" />
         <mkdir dir="${dist.dir}" />
         <mkdir dir="${reports.dir}" />
         <mkdir dir="${javadoc.dir}" />
@@ -14,5 +15,29 @@
             <format property="build.date" pattern="yyMMddHHmmss" />
         </tstamp>
     </target>
+    <target description="--&gt; pre-classpath-init hook" name="-pre-classpath-init"/>
+    <target description="--&gt; post-classpath-init hook" name="-post-classpath-init"/>
+    <target name="-classpath-init">
+      <antcall target="-pre-classpath-init"/>
 
+      <path id="buildClasspath">
+        <fileset dir="${lib.dir}">
+          <include name="**/*.jar"/>
+          <exclude name="test/**"/>
+        </fileset>
+        <!--
+        <fileset dir="jetty/lib" erroronmissingdir="false">
+          <include name="jetty*.jar"/>
+        </fileset>
+        -->
+        <pathelement location="${build.classes.dir}"/>
+      </path>
+      <path id="classpath.build.test">
+        <path refid="buildClasspath"/>
+        <fileset dir="${lib.dir}/test" erroronmissingdir="false" includes="*.jar"/>
+        <pathelement location="${test-classes}"/>
+      </path>
+
+      <antcall target="-post-classpath-init"/>
+    </target>
 </project>
