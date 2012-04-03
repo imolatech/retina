@@ -4,5 +4,5 @@ public enum MessageType {
 	USER_IN,
 	USER_OUT,
 	GESTURES,
-	USER_TRACKING
+	TRACKED_USERS
 }

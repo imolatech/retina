@@ -296,7 +296,7 @@ fi
 
 
 
-CP="${HOME_DIR}/lib/*:${HOME_DIR}/jetty/lib/*:${HOME_DIR}/config:${HOME_DIR}/jetty:${TOOLS_JAR}"
+CP="${HOME_DIR}/lib/*:${HOME_DIR}/jwebsocket/lib/*:${HOME_DIR}/config"
 
 GC_LOGGING="-verbose:gc -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -Xloggc:${LOG_DIR}/${APP_NAME}-gc.log"
 

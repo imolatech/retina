@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.imolatech.retina.Messenger;
 import com.imolatech.retina.kinect.serializer.MotionDataSerializer;
 import com.imolatech.retina.kinect.serializer.NewUserSerializer;
-import com.imolatech.retina.kinect.serializer.UserTrackingSerializer;
+import com.imolatech.retina.kinect.serializer.TrackedUsersSerializer;
 
 public class UserTracker {
 	private static final Logger logger = LoggerFactory.getLogger(UserTracker.class);
@@ -100,7 +100,7 @@ public class UserTracker {
 					updateJoints(userId);
 			}
 			//now we need to convert userSkeletons to json and send skeleton data to client
-			MotionDataSerializer serializer = new UserTrackingSerializer(userSkeletons);
+			MotionDataSerializer serializer = new TrackedUsersSerializer(userSkeletons);
 			messenger.send(serializer.toJson());
 		} catch (StatusException e) {
 			logger.warn("Error while receiving data from kinect.", e);

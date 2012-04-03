@@ -26,7 +26,7 @@
       <!-- Hook into fixing lib jar updates -->
     </target>
 
-    <target name="_build-tests" depends="build">
+    <target name="_build-tests" depends="_build">
       <javac srcdir="${test.src.dir}" destdir="${test.classes.dir}" deprecation="on"
         classpathref="classpath.build.test" debug="on" source="${java.target.version}"
         includeantruntime="false"/>

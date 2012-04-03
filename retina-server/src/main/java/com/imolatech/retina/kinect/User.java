@@ -1,12 +1,15 @@
 package com.imolatech.retina.kinect;
 
-import java.util.List;
+import java.util.HashMap;
+
+import org.OpenNI.SkeletonJoint;
+import org.OpenNI.SkeletonJointPosition;
 
 public class User {
 	private Integer id;
 	private String centerOfMass;
 	private boolean active;
-	private List<UserSkeletonJoint> joints;
+	private HashMap<SkeletonJoint, SkeletonJointPosition> joints;
 	
 	public Integer getId() {
 		return id;
@@ -26,10 +29,11 @@ public class User {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	public List<UserSkeletonJoint> getJoints() {
+	public HashMap<SkeletonJoint, SkeletonJointPosition> getJoints() {
 		return joints;
 	}
-	public void setJoints(List<UserSkeletonJoint> joints) {
+	public void setJoints(HashMap<SkeletonJoint, SkeletonJointPosition> joints) {
 		this.joints = joints;
 	}
+	
 }

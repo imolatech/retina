@@ -6,7 +6,7 @@
       <param name="targetRootDir" value="${deploy.dir}"/>
     </antcall>
   </target>
-
+  <!-- TODO move moule.jar to a app_name.jar, move jwebsocket to jwebsocket/lib-->
   <target name="_deploy" if="targetRootDir">
     <copy todir="${targetRootDir}/lib" >
       <fileset dir="${lib.dir}/default" erroronmissingdir="false">
