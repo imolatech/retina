@@ -19,6 +19,7 @@ import org.jwebsocket.server.TokenServer;
 import org.jwebsocket.token.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.imolatech.retina.kinect.KinectListener;
 
 /**
  *
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class WebSocketServer implements WebSocketServerTokenListener, Messenger {
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private TokenServer tokenServer;
+    private KinectListener listener;
     
     public TokenServer getTokenServer() {
         return tokenServer;
@@ -48,22 +50,55 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
     }
     @Override
     public void processToken(WebSocketServerTokenEvent wsste, Token token) {
-        logger.debug("got token {}", token.toString());
+    	logger.debug("process token.id={};nodeId={}", wsste.getConnector().getId(), wsste.getConnector().getNodeId());
+    	logger.debug("got token {}", token.toString());
+        if (token != null && "com.imolatech.kinect".equals(token.getNS())) {
+        	if ("register".equals(token.getType())) {
+        		//token.getType is token.getString("type")
+        		logger.debug("starting kinect: {}", token.getString("stream"));
+        		startKinectListener();
+        	} else if ("stop".equals(token.getType())) {
+        		//token.getType is token.getString("type")
+        		logger.debug("stop kinect.");
+        		stopKinectListener();
+        	}
+        }
     }
 
-    @Override
+    private void startKinectListener() {
+    	if (listener == null) {
+    		listener = new KinectListener(this);
+    	}
+    	if (listener.isRunning()) return;
+        if (listener.start()) {
+        	listener.listen();
+        }
+	}
+
+    private void stopKinectListener() {
+    	if (listener != null) {
+    		listener.stop();
+    	}
+	}
+    
+	@Override
     public void processOpened(WebSocketServerEvent wsse) {
-    	logger.debug("process opened.");
+		//nodeId is always null,connector.getId is something like 01.51325.1
+		//we could use connector.id to identify a client and cache it so that we 
+		//might stop the websocket server if it is closed (not needed right now).
+    	logger.debug("process opened.id={};nodeId={}", wsse.getConnector().getId(), wsse.getConnector().getNodeId());
     }
 
     @Override
     public void processPacket(WebSocketServerEvent wsse, WebSocketPacket wsp) {
-    	logger.debug("process packet.");
+    	logger.debug("process packet.id={};nodeId={}", wsse.getConnector().getId(), wsse.getConnector().getNodeId());
+    
+    	logger.debug("process packet: {}.", wsp.getString());
     }
 
     @Override
     public void processClosed(WebSocketServerEvent wsse) {
-    	logger.debug("process closed.");
+    	logger.debug("process closed.id={};nodeId={}", wsse.getConnector().getId(), wsse.getConnector().getNodeId());
     }
     
     //suppose message coming in is in json format

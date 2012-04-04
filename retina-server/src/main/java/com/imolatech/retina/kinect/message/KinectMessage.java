@@ -10,7 +10,7 @@ public abstract class KinectMessage {
 	// gson will only look for property, not getter
 	protected MessageType type;
 	private Long timestamp;
-	private String ns = "imolatech.kinect"; //name space
+	private String ns = "com.imolatech.kinect"; //name space
 	
 	public MessageType getType() {
 		return type;

@@ -9,7 +9,7 @@ import com.imolatech.retina.Messenger;
 
 public class KinectListener implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(KinectListener.class);
-	private volatile boolean isRunning;
+	private volatile boolean running;
 	private Context context;
 	//tracking users and their skeletons
 	private UserTracker userTracker; 
@@ -22,6 +22,8 @@ public class KinectListener implements Runnable {
 	public boolean start() {
 		try {
 			configOpenNI();
+			context.startGeneratingAll();
+			logger.info("Started context generating...");
 		} catch (Exception e) {
 			logger.warn("Kinect configuration errror.", e);
 			return false;
@@ -39,14 +41,12 @@ public class KinectListener implements Runnable {
 	 * metadata, and skeletons
 	 */
 	private void configOpenNI() throws Exception {
-		
+		if (context == null) {
 			context = new Context();
-
 			// add the NITE Licence
 			License license = new License("PrimeSense",
 					"0KOIk2JeIBYClPWVnMoRKn5cdY4="); // vendor, key
 			context.addLicense(license);
-
 			DepthGenerator depthGenerator = DepthGenerator.create(context);
 			// xRes, yRes and FPS
 			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); 
@@ -56,9 +56,7 @@ public class KinectListener implements Runnable {
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
 			userTracker = new UserTracker(userGenerator, depthGenerator, messenger);
-
-			context.startGeneratingAll();
-			logger.info("Started context generating...");
+		}
 		
 	} // end of configOpenNI()
 
@@ -66,15 +64,27 @@ public class KinectListener implements Runnable {
 		return totalTime;
 	}
 
+	/**
+	 * Stop generating data, later we can resume it.
+	 */
 	public void stop() {
 		logger.info("Make Kinect Listener stop.");
-		isRunning = false;
+		running = false;
 	}
 	
+	/**
+	 * Completely release the context
+	 */
+	public void shutdown() {
+		context.release();
+	}
+	public boolean isRunning() {
+		return running;
+	}
 	public void run() {
 		totalTime = 0;
-		isRunning = true;
-		while (isRunning) {
+		running = true;
+		while (running) {
 			try {
 				context.waitAnyUpdateAll();
 			} catch (StatusException e) {
@@ -92,8 +102,8 @@ public class KinectListener implements Runnable {
 		} catch (StatusException e) {
 			logger.warn("Stop Kinect error.", e);
 		}
-		context.release();
-		
+		logger.info("Stopped generating Kinect data");
+		//context.release();
 	} // end of run()
 
 } // end of TrackerPanel class

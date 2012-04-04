@@ -4,8 +4,6 @@
  */
 package com.imolatech.retina;
 
-import com.imolatech.retina.kinect.KinectListener;
-
 /**
  * The main application to start a websocket server and 
  * listen on kinect sensor data.
@@ -22,10 +20,7 @@ public class RetinaServer {
     public static void main(String[] args) {
         WebSocketServer server = new WebSocketServer();
         server.start();
-        KinectListener listener = new KinectListener(server);
-        if (listener.start()) {
-        	listener.listen();
-        }
+        
         //simulate server messages
         for (int i=0; i<3; i++) {
             sleep();
