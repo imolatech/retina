@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.imolatech.retina.Messenger;
+import com.imolatech.retina.kinect.serializer.LostUserSerializer;
 import com.imolatech.retina.kinect.serializer.MotionDataSerializer;
 import com.imolatech.retina.kinect.serializer.NewUserSerializer;
 import com.imolatech.retina.kinect.serializer.TrackedUsersSerializer;
@@ -37,7 +38,7 @@ public class UserTracker {
 	private String calibPoseName = null;
 
 	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
-
+	
 	// was SkeletonJointTransformation
 	/*
 	 * userSkels maps user IDs --> a joints map (i.e. a skeleton) skeleton maps
@@ -213,7 +214,7 @@ public class UserTracker {
 				UserEventArgs args) {
 			logger.debug("Lost track of user {}", args.getId());
 			userSkeletons.remove(args.getId()); // remove user from userSkels
-			MotionDataSerializer serializer = new NewUserSerializer(args.getId());
+			MotionDataSerializer serializer = new LostUserSerializer(args.getId());
 			messenger.send(serializer.toJson());
 		}
 	} // end of LostUserObserver inner class

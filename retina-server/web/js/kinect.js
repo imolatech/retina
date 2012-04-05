@@ -1,9 +1,9 @@
 jQuery(function($){
 	
-	$.jws.open();
+	$.imola.open();
 		
-	$.jws.bind( "org.jwebsocket.plugins.system:welcome", function( aEvt, aToken ) {
-		$.jws.submit(
+	$.imola.bind( "org.jwebsocket.plugins.system:welcome", function( aEvt, aToken ) {
+		$.imola.submit(
 			"org.jwebsocket.plugins.system",
 			"login",
 			{	username: jws.GUEST_USER_LOGINNAME,
@@ -12,9 +12,9 @@ jQuery(function($){
 		);
 	});	
 	
-	$.jws.bind( "org.jwebsocket.plugins.system:response", function( aEvt, aToken ) {
+	$.imola.bind( "org.jwebsocket.plugins.system:response", function( aEvt, aToken ) {
 		if( "login" == aToken.reqType && 0 == aToken.code ) {
-			$.jws.submit(
+			$.imola.submit(
 				"com.imolatech.kinect",
 				"register",
 				{	stream: "userStream"
@@ -22,14 +22,24 @@ jQuery(function($){
 			);
 		} 
 	});
-	$.jws.bind( "message", function( aEvt, aToken ) {
-		//alert(aEvt.data + "\n" + aToken.data);
-		$('#log-div').append('<p>TokenNS-' + aToken.ns + ';TokenType-'+ aToken.type + 
-		  ';TokenName-' + aToken.name  + '</p>');
-		$('#log-div').append('<p>' + aToken.data + '</p>');	
+	$.imola.bind( "message", function( aEvt, aToken ) {
+		var kinectData = $.parseJSON(aToken.data);
+		if ("com.imolatech.kinect" === kinectData.ns) {
+			if ("USER_IN" === kinectData.type) {
+				$('#log-div').append('<p>New user in,userId = ' + kinectData.userId + '</p>');
+			} else if ("USER_OUT" === kinectData.type) {
+				$('#log-div').append('<p>New user out,userId = ' + kinectData.userId + '</p>');
+			} else if ("TRACKED_USERS" === kinectData.type) {
+				$.each(kinectData.users, function(i, user) {
+					$('#log-div').append('<p>User skeletons,userId = ' + user.id + '</p>');
+					$('#log-div').append('<p>Head position is  ' + user.joints.HEAD.position.X + '</p>');
+				});
+			}
+		}
+		
 	});
 	$('#stop-button').click(function() {
-		$.jws.submit(
+		$.imola.submit(
 				"com.imolatech.kinect",
 				"stop"
 			);
