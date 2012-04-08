@@ -18,6 +18,26 @@ h1
     font-family: Segoe UI Light, Segoe UI, Helvetica Neue, Arial, Sans-Serif;
     font-weight: normal;
 }
+a {
+	font-weight: bold;
+	text-decoration: underline;
+	color: red;
+}
+
+a:link {
+	color: #ff0000;
+}
+a:visited {
+	color: #663366;
+}
+a:hover {
+	color: #660066;
+}
+a:active {
+	color: #660066;
+	/*text-decoration: none;*/
+}
+
 
 #canvas
 {
