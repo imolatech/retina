@@ -22,22 +22,32 @@ jQuery(function($){
 			);
 		} 
 	});
-	$.imola.bind( "message", function( aEvt, aToken ) {
-		var kinectData = $.parseJSON(aToken.data);
-		if ("com.imolatech.kinect" === kinectData.ns) {
-			if ("USER_IN" === kinectData.type) {
-				$('#log-div').append('<p>New user in,userId = ' + kinectData.userId + '</p>');
-			} else if ("USER_OUT" === kinectData.type) {
-				$('#log-div').append('<p>New user out,userId = ' + kinectData.userId + '</p>');
-			} else if ("TRACKED_USERS" === kinectData.type) {
-				$.each(kinectData.users, function(i, user) {
-					$('#log-div').append('<p>User skeletons,userId = ' + user.id + '</p>');
-					$('#log-div').append('<p>Head position is  ' + user.joints.HEAD.position.X + '</p>');
-				});
-			}
-		}
+	
+	
+	$.imola.bind( "com.imolatech.kinect.MESSAGE", function(event, aEvt, aToken) {
+		$('#log-div').append('<p>Event Data is: ' + aEvt.data + '</p>');
+		//$('#log-div').append('<p>Token Data is: ' + aToken.data + '</p>');
+	});
+	
+	$.imola.bind( "com.imolatech.kinect.USER_IN", function(event,userId) {
+		$('#log-div').append('<p>New User is coming: ' + userId + '</p>');
 		
 	});
+	
+	$.imola.bind( "com.imolatech.kinect.USER_OUT", function(event, userId) {
+		$('#log-div').append('<p>User is out: ' + userId + '</p>');
+		
+	});
+	
+	$.imola.bind( "com.imolatech.kinect.SKELETONS", function(event, users) {
+		
+		$.each(users, function(i, user) {
+			$('#log-div').append('<p>User skeletons,userId = ' + user.id + '</p>');
+			$('#log-div').append('<p>Head position is  ' + user.joints.HEAD.position.X + '</p>');
+		});
+		
+	});
+	
 	$('#stop-button').click(function() {
 		$.imola.submit(
 				"com.imolatech.kinect",

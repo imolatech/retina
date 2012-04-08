@@ -7,6 +7,7 @@ import java.util.List;
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 
+import com.imolatech.retina.kinect.Joint;
 import com.imolatech.retina.kinect.User;
 
 public class TrackedUsersMessage extends KinectMessage {
@@ -25,7 +26,15 @@ public class TrackedUsersMessage extends KinectMessage {
 		User user = new User();
 		user.setId(userId);
 		//TODO need set active user.setActive(false);
-		user.setJoints(joints);
+		List<Joint> result = new ArrayList<Joint>();
+		
+		for (SkeletonJoint sj : joints.keySet()) {
+			Joint joint = new Joint();
+			joint.setName(sj.name());
+			joint.setPosition(joints.get(sj));
+			result.add(joint);
+		}
+		user.setJoints(result);
 		return user;
 	}
 	

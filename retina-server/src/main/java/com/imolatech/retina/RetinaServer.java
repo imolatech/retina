@@ -20,20 +20,5 @@ public class RetinaServer {
     public static void main(String[] args) {
         WebSocketServer server = new WebSocketServer();
         server.start();
-        
-        //simulate server messages
-        for (int i=0; i<3; i++) {
-            sleep();
-            server.pushMessage(String.valueOf(i));
-        }
     }
-    
-    private static void sleep() {
-        try {
-            Thread.sleep(10000);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }   
-   
 }

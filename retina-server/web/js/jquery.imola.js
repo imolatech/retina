@@ -22,7 +22,7 @@
 					$.imola.aTokenClient.addPlugIn($.imola);
 				},
 				OnMessage: function( aEvent, aToken ) {
-					$.imola.trigger('message',[aEvent, aToken]);
+					$.imola.processMessage(aEvent, aToken);
 				},
 				OnClose: function(){
 					$.imola.trigger('close');
@@ -100,5 +100,20 @@
         
 	$.imola.close = function(){
 		this.aTokenClient.close();
+	};
+	
+	$.imola.processMessage = function(aEvt, aToken) {
+		var kinectData = $.parseJSON(aEvt.data);
+		if ("com.imolatech.kinect" === kinectData.ns) {
+			if ("USER_IN" === kinectData.type) {
+				$.imola.trigger('com.imolatech.kinect.USER_IN',[kinectData.userId]);
+			} else if ("USER_OUT" === kinectData.type) {
+				$.imola.trigger('com.imolatech.kinect.USER_OUT',[kinectData.userId]);
+			} else if ("TRACKED_USERS" === kinectData.type) {
+				$.imola.trigger('com.imolatech.kinect.SKELETONS',[kinectData.users]);
+			}
+		} else {
+			$.imola.trigger('com.imolatech.kinect.MESSAGE',[aEvt, aToken]); //message is aEvt.data
+		}
 	};
 })(jQuery);
