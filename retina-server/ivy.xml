@@ -35,6 +35,8 @@
 		
 		<dependency org="primesense" name="openni" rev="1.5.2.23"
 			conf="default->default" />
+		<dependency org="primesense" name="nite" rev="1.5.2.21"
+			conf="default->default" />
 		<dependency org="jwebsocket" name="jwebsocket" rev="1.0"
 			conf="default->default" >
 			<exclude org="org.slf4j" name="slf4j-api"/>
