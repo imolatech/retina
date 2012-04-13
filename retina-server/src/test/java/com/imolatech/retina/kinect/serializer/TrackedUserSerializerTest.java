@@ -20,16 +20,15 @@ public class TrackedUserSerializerTest {
 		TrackedUsersSerializer serializer = new TrackedUsersSerializer(usersSkeletons);
 		String json = serializer.toJson();
 		System.out.println(json);
-		String expected = "{\"users\":[{\"id\":1,\"active\":false,\"joints\":[{\"name\":\"LEFT_FOOT\"," +
-				"\"position\":{\"X\":120.0,\"Y\":120.0,\"Z\":120.0},\"confidence\":0.8}," +
-				"{\"name\":\"HEAD\",\"position\":{\"X\":20.0,\"Y\":20.0,\"Z\":20.0},\"confidence\":0.8}]}," +
-				"{\"id\":2,\"active\":false,\"joints\":[{\"name\":\"LEFT_FOOT\"," +
-				"\"position\":{\"X\":120.0,\"Y\":120.0,\"Z\":120.0},\"confidence\":0.8}," +
-				"{\"name\":\"HEAD\",\"position\":{\"X\":20.0,\"Y\":20.0,\"Z\":20.0},\"confidence\":0.8}]}]," +
-				"\"type\":\"TRACKED_USERS\",";
+		String expected = "{\"users\":[{\"id\":1,\"active\":false,\"joints\":["; 
+		String expected2 = "{\"name\":\"HEAD\",\"position\":{\"X\":20.0,\"Y\":20.0,\"Z\":20.0},\"confidence\":0.8}";
+		String expected3 = "{\"name\":\"LEFT_FOOT\",\"position\":{\"X\":120.0,\"Y\":120.0,\"Z\":120.0},\"confidence\":0.8}";
+		String expected4 = "{\"id\":2,\"active\":false,\"joints\":[";
 		
 		assertThat(json.indexOf(expected), is(greaterThanOrEqualTo(0)));
-		
+		assertThat(json.indexOf(expected2), is(greaterThanOrEqualTo(0)));
+		assertThat(json.indexOf(expected3), is(greaterThanOrEqualTo(0)));
+		assertThat(json.indexOf(expected4), is(greaterThanOrEqualTo(0)));
 	}
 	
 	private void buildUsersSkeletons() {
