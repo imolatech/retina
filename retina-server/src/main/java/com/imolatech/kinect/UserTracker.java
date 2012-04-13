@@ -48,7 +48,7 @@ public class UserTracker {
 		this.userGenerator = userGen;
 		this.depthGenerator = depthGen;
 		this.messenger = messenger;
-		configure();
+		
 		userSkeletons = new HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>>();
 	} // end of Skeletons()
 
@@ -56,34 +56,32 @@ public class UserTracker {
 	 * create pose and skeleton detection capabilities for the user generator,
 	 * and set up observers (listeners)
 	 */
-	private void configure() {
-		try {
-			// setup UserGenerator pose and skeleton detection capabilities;
-			// should really check these using
-			// ProductionNode.isCapabilitySupported()
-			poseDetectionCapability = userGenerator.getPoseDetectionCapability();
+	public void init() throws StatusException {
+		
+		// setup UserGenerator pose and skeleton detection capabilities;
+		// should really check these using
+		// ProductionNode.isCapabilitySupported()
+		poseDetectionCapability = userGenerator.getPoseDetectionCapability();
 
-			skeletonCapability = userGenerator.getSkeletonCapability();
-			// the 'psi' pose
-			calibPoseName = skeletonCapability.getSkeletonCalibrationPose(); 
-			skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
-			// other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
+		skeletonCapability = userGenerator.getSkeletonCapability();
+		// the 'psi' pose
+		calibPoseName = skeletonCapability.getSkeletonCalibrationPose(); 
+		skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
+		// other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
 
-			// set up four observers
-			userGenerator.getNewUserEvent().addObserver(new NewUserObserver()); 
-			userGenerator.getLostUserEvent().addObserver(new LostUserObserver()); 
+		// set up four observers
+		userGenerator.getNewUserEvent().addObserver(new NewUserObserver()); 
+		userGenerator.getLostUserEvent().addObserver(new LostUserObserver()); 
 
-			poseDetectionCapability.getPoseDetectedEvent().addObserver(
-					new PoseDetectedObserver());
-			// for when a pose is detected
+		poseDetectionCapability.getPoseDetectedEvent().addObserver(
+				new PoseDetectedObserver());
+		// for when a pose is detected
 
-			skeletonCapability.getCalibrationCompleteEvent().addObserver(
-					new CalibrationCompleteObserver());
-			// for when skeleton calibration is completed, and tracking starts
-		} catch (Exception e) {
-			logger.warn("Error in configuration.", e);
-		}
-	} // end of configure()
+		skeletonCapability.getCalibrationCompleteEvent().addObserver(
+				new CalibrationCompleteObserver());
+		// for when skeleton calibration is completed, and tracking starts
+		
+	} 
 
 	// --------------- updating ----------------------------
 	// update skeleton of each user

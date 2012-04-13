@@ -30,6 +30,8 @@ package com.imolatech.kinect.sample;
  All these are subclasses of PointControl.
  */
 import org.OpenNI.*;
+
+import com.imolatech.kinect.PositionInfo;
 import com.primesense.NITE.*;
 
 public class GestureDetect {
@@ -44,7 +46,7 @@ public class GestureDetect {
 		try {
 			configOpenNI();
 			configNITE();
-
+			context.startGeneratingAll();
 			System.out.println();
 			System.out.println("Make a click gesture to start the session");
 			while (isRunning) {
@@ -76,7 +78,7 @@ public class GestureDetect {
 			GestureGenerator gestureGen = GestureGenerator.create(context); // OpenNI
 			setGestureEvents(gestureGen);
 
-			context.startGeneratingAll();
+			//context.startGeneratingAll();
 			System.out.println("Started context generating...");
 		} catch (GeneralException e) {
 			e.printStackTrace();

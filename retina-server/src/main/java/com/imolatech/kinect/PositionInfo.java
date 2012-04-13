@@ -1,4 +1,4 @@
-package com.imolatech.kinect.sample;
+package com.imolatech.kinect;
 
 /*  Store hand point information obtained from a NITE PointControl.
 */

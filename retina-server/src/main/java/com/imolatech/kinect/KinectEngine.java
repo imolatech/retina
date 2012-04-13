@@ -5,13 +5,17 @@ import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.primesense.NITE.SessionManager;
+
 
 public class KinectEngine implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(KinectEngine.class);
 	private volatile boolean running;
-	private Context context;
+	private Context context; //OPENNI
+	private SessionManager sessionManager; //NITE
 	//tracking users and their skeletons
 	private UserTracker userTracker; 
+	private GestureDetector gestureDetector;
 	private long totalTime = 0;
 	private Messenger messenger;
 	
@@ -46,6 +50,8 @@ public class KinectEngine implements Runnable {
 			License license = new License("PrimeSense",
 					"0KOIk2JeIBYClPWVnMoRKn5cdY4="); // vendor, key
 			context.addLicense(license);
+			
+			// Depth and User to generate skeleton data
 			DepthGenerator depthGenerator = DepthGenerator.create(context);
 			// xRes, yRes and FPS
 			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); 
@@ -55,6 +61,18 @@ public class KinectEngine implements Runnable {
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
 			userTracker = new UserTracker(userGenerator, depthGenerator, messenger);
+			userTracker.init();
+			
+			// Gesture and hands to generate gesture data
+			HandsGenerator handsGenerator = HandsGenerator.create(context); // OpenNI
+			// 0-1: 0 means no smoothing, 1 means 'infinite'
+			handsGenerator.SetSmoothing(0.1f);
+			GestureGenerator gestureGenerator = GestureGenerator.create(context); // OpenNI
+			
+			sessionManager = new SessionManager(context, "Click", "RaiseHand"); // NITE
+			gestureDetector = new GestureDetector(handsGenerator, gestureGenerator, sessionManager, messenger);
+			
+			gestureDetector.init();
 		}
 		
 	} // end of configOpenNI()
@@ -86,8 +104,9 @@ public class KinectEngine implements Runnable {
 		while (running) {
 			try {
 				context.waitAnyUpdateAll();
+				sessionManager.update(context);
 			} catch (StatusException e) {
-				System.out.println(e);
+				logger.error("Error while waiting for context.update", e);
 				return;
 			}
 			long startTime = System.currentTimeMillis();
