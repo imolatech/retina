@@ -18,6 +18,12 @@ public class TrackedUsersSerializer implements MotionDataSerializer {
 	public TrackedUsersSerializer(HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> usersSkeletons) {
 		this.usersSkeletons = usersSkeletons;
 	}
+	public TrackedUsersSerializer() {
+		
+	}
+	public void setUsersSkeletons(HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> usersSkeletons) {
+		this.usersSkeletons = usersSkeletons;
+	}
 	@Override
 	public String toJson() {
 		if (usersSkeletons == null || usersSkeletons.isEmpty()) return null;

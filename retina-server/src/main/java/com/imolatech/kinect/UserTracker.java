@@ -27,7 +27,7 @@ public class UserTracker {
 	// OpenNI
 	private UserGenerator userGenerator;
 	private DepthGenerator depthGenerator;
-
+	private boolean updating = false;
 	// OpenNI capabilities used by UserGenerator
 	private SkeletonCapability skeletonCapability;
 	// to output skeletal data, including the location of the joints
@@ -35,7 +35,7 @@ public class UserTracker {
 	// to recognize when the user is in a specific position
 
 	private String calibPoseName = null;
-
+	private TrackedUsersSerializer serializer = new TrackedUsersSerializer();
 	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
 	
 	// was SkeletonJointTransformation
@@ -52,6 +52,9 @@ public class UserTracker {
 		userSkeletons = new HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>>();
 	} // end of Skeletons()
 
+	public boolean isUpdating() {
+		return updating;
+	}
 	/*
 	 * create pose and skeleton detection capabilities for the user generator,
 	 * and set up observers (listeners)
@@ -86,6 +89,7 @@ public class UserTracker {
 	// --------------- updating ----------------------------
 	// update skeleton of each user
 	public void update() {
+		updating = true;
 		try {
 			// there may be many users in the scene
 			int[] userIds = userGenerator.getUsers(); 
@@ -98,12 +102,13 @@ public class UserTracker {
 					updateJoints(userId);
 			}
 			//now we need to convert userSkeletons to json and send skeleton data to client
-			MotionDataSerializer serializer = new TrackedUsersSerializer(userSkeletons);
+			serializer.setUsersSkeletons(userSkeletons);//do not new object,should reuse the serializer
 			messenger.send(serializer.toJson());
-		} catch (StatusException e) {
+		} catch (Exception e) {
 			logger.warn("Error while receiving data from kinect.", e);
 		}
-	} // end of update()
+		updating = false;
+	} 
 
 	// update all the joints for this userID in userSkels
 	private void updateJoints(int userId) {

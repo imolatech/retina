@@ -1,4 +1,4 @@
-package com.imolatech.kinect.sample;
+package com.imolatech.kinect.sample.gesturetracker;
 
 /*  Use OpenNI's Gesture Generator and Hands Generator with
  some of NITE's detectors (controls, listeners)
@@ -31,27 +31,37 @@ package com.imolatech.kinect.sample;
  */
 import org.OpenNI.*;
 
+import com.imolatech.kinect.LoggerMessenger;
 import com.imolatech.kinect.PositionInfo;
+import com.imolatech.kinect.UserTracker;
 import com.primesense.NITE.*;
 
-public class GestureDetect {
+public class GestureTracker {
 	// OpenNI and NITE vars
 	private Context context;
 	private SessionManager sessionMan;
-
+	private UserTracker userTracker;
 	private boolean isRunning = true;
+	private boolean updating = false;
 	private PositionInfo pi = null; // for storing current hand point info
-
-	public GestureDetect() {
+	private GestureGenerator gestureGen;
+	
+	public GestureTracker() {
 		try {
 			configOpenNI();
 			configNITE();
-			context.startGeneratingAll();
+			//context.startGeneratingAll();
 			System.out.println();
 			System.out.println("Make a click gesture to start the session");
 			while (isRunning) {
 				context.waitAnyUpdateAll();
-				sessionMan.update(context);
+				//context.waitOneUpdateAll(gestureGen);
+				if (!userTracker.isUpdating()) {
+					userTracker.update();
+				}
+				//if (!updating) {
+				//	update(context);
+				//}
 			}
 			context.release();
 		} catch (GeneralException e) {
@@ -59,6 +69,11 @@ public class GestureDetect {
 		}
 	} // end of GestureDetect()
 
+	public void update(Context context) throws StatusException {
+		updating = true;
+		sessionMan.update(context);
+		updating = false;
+	}
 	private void configOpenNI()
 	// set up the Gesture and Hands Generators in OpenNI
 	{
@@ -70,15 +85,27 @@ public class GestureDetect {
 					"0KOIk2JeIBYClPWVnMoRKn5cdY4=");
 			context.addLicense(licence);
 
+			// Depth and User to generate skeleton data
+			DepthGenerator depthGenerator = DepthGenerator.create(context);
+			// xRes, yRes and FPS
+			MapOutputMode mapMode = new MapOutputMode(640, 480, 30); 
+			depthGenerator.setMapOutputMode(mapMode);
+
+			context.setGlobalMirror(true); // set mirror mode
+			UserGenerator userGenerator = UserGenerator.create(context);
+			
+			userTracker = new UserTracker(userGenerator, depthGenerator, new LoggerMessenger());
+			userTracker.init();
+						
 			HandsGenerator handsGen = HandsGenerator.create(context); // OpenNI
 			handsGen.SetSmoothing(0.1f);
 			// 0-1: 0 means no smoothing, 1 means 'infinite'
 			setHandEvents(handsGen);
 
-			GestureGenerator gestureGen = GestureGenerator.create(context); // OpenNI
+			gestureGen = GestureGenerator.create(context); // OpenNI
 			setGestureEvents(gestureGen);
 
-			//context.startGeneratingAll();
+			context.startGeneratingAll();
 			System.out.println("Started context generating...");
 		} catch (GeneralException e) {
 			e.printStackTrace();
@@ -456,7 +483,7 @@ public class GestureDetect {
 	// ----------------------------------
 
 	public static void main(String args[]) {
-		new GestureDetect();
+		new GestureTracker();
 	}
 
 } // end of GestureDetect class
