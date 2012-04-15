@@ -18,7 +18,7 @@ public class KinectEngine implements Runnable {
 	private GestureDetector gestureDetector;
 	private long totalTime = 0;
 	private Messenger messenger;
-	
+	private boolean runGestureDetector = false;
 	public KinectEngine(Messenger messenger) {
 		this.messenger = messenger;
 	}
@@ -62,21 +62,24 @@ public class KinectEngine implements Runnable {
 			
 			userTracker = new UserTracker(userGenerator, depthGenerator, messenger);
 			userTracker.init();
-			
-			// Gesture and hands to generate gesture data
-			HandsGenerator handsGenerator = HandsGenerator.create(context); // OpenNI
-			// 0-1: 0 means no smoothing, 1 means 'infinite'
-			handsGenerator.SetSmoothing(0.1f);
-			GestureGenerator gestureGenerator = GestureGenerator.create(context); // OpenNI
-			
-			sessionManager = new SessionManager(context, "Click", "RaiseHand"); // NITE
-			gestureDetector = new GestureDetector(handsGenerator, gestureGenerator, sessionManager, messenger);
-			
-			gestureDetector.init();
+			if (runGestureDetector) {
+				configGestureDetector();
+			}
 		}
 		
 	} // end of configOpenNI()
-
+	private void configGestureDetector() throws Exception {
+		// Gesture and hands to generate gesture data
+		HandsGenerator handsGenerator = HandsGenerator.create(context); // OpenNI
+		// 0-1: 0 means no smoothing, 1 means 'infinite'
+		handsGenerator.SetSmoothing(0.1f);
+		GestureGenerator gestureGenerator = GestureGenerator.create(context); // OpenNI
+		
+		sessionManager = new SessionManager(context, "Click", "RaiseHand"); // NITE
+		gestureDetector = new GestureDetector(handsGenerator, gestureGenerator, sessionManager, messenger);
+		
+		gestureDetector.init();
+	}
 	public long getTotalTime() {
 		return totalTime;
 	}
@@ -104,7 +107,9 @@ public class KinectEngine implements Runnable {
 		while (running) {
 			try {
 				context.waitAnyUpdateAll();
-				sessionManager.update(context);
+				if (runGestureDetector) {
+					sessionManager.update(context);
+				}
 			} catch (StatusException e) {
 				logger.error("Error while waiting for context.update", e);
 				return;
