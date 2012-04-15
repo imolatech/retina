@@ -13,7 +13,7 @@ import org.OpenNI.StatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.PositionInfo;
+import com.imolatech.kinect.HandPositionInfo;
 import com.imolatech.kinect.engine.Messenger;
 import com.primesense.NITE.CircleDetector;
 import com.primesense.NITE.DirectionVelocityAngleEventArgs;
@@ -47,7 +47,7 @@ public class HandGestureDetector {
 	private GestureGenerator gestureGenerator;
 	private SessionManager sessionManager;
 	// for storing current hand point info
-	private PositionInfo pi = null;
+	private HandPositionInfo pi = null;
 
 	public HandGestureDetector(HandsGenerator handsGenerator,
 			GestureGenerator gestureGenerator, SessionManager sessionManager,
@@ -209,7 +209,7 @@ public class HandGestureDetector {
 				new IObserver<HandEventArgs>() {
 					public void update(IObservable<HandEventArgs> observable,
 							HandEventArgs args) {
-						pi = new PositionInfo(args.getHand());
+						pi = new HandPositionInfo(args.getHand());
 						System.out.println(pi);
 					}
 				});
@@ -221,7 +221,7 @@ public class HandGestureDetector {
 							HandEventArgs args) {
 						HandPointContext handContext = args.getHand();
 						if (pi == null)
-							pi = new PositionInfo(handContext);
+							pi = new HandPositionInfo(handContext);
 						else
 							pi.update(handContext);
 						// System.out.println(pi); // commented out to
