@@ -30,12 +30,15 @@ import java.util.*;
 
 import org.OpenNI.*;
 
+import com.imolatech.kinect.GestureName;
+import com.imolatech.kinect.GestureWatcher;
+
 import java.nio.ShortBuffer;
 
 
 
 
-public class TrackerPanel extends JPanel implements Runnable, GesturesWatcher
+public class TrackerPanel extends JPanel implements Runnable, GestureWatcher
 {
   private static final int MAX_DEPTH_SIZE = 10000;  
 

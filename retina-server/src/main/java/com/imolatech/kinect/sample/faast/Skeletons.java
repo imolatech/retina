@@ -40,6 +40,9 @@ import java.util.*;
 
 import org.OpenNI.*;
 
+import com.imolatech.kinect.GestureSequences;
+import com.imolatech.kinect.GestureWatcher;
+
 import java.nio.ShortBuffer;
 
 
@@ -82,7 +85,7 @@ public class Skeletons
 
 
 
-  public Skeletons(UserGenerator userGen, DepthGenerator depthGen, GesturesWatcher watcher)
+  public Skeletons(UserGenerator userGen, DepthGenerator depthGen, GestureWatcher watcher)
   {
     this.userGen = userGen;
     this.depthGen = depthGen;

@@ -1,10 +1,12 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.engine;
 
 
 import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.detector.HandGestureDetector;
+import com.imolatech.kinect.detector.UserTracker;
 import com.primesense.NITE.SessionManager;
 
 
@@ -15,7 +17,7 @@ public class KinectEngine implements Runnable {
 	private SessionManager sessionManager; //NITE
 	//tracking users and their skeletons
 	private UserTracker userTracker; 
-	private GestureDetector gestureDetector;
+	private HandGestureDetector gestureDetector;
 	private long totalTime = 0;
 	private Messenger messenger;
 	private boolean runGestureDetector = false;
@@ -76,7 +78,7 @@ public class KinectEngine implements Runnable {
 		GestureGenerator gestureGenerator = GestureGenerator.create(context); // OpenNI
 		
 		sessionManager = new SessionManager(context, "Click", "RaiseHand"); // NITE
-		gestureDetector = new GestureDetector(handsGenerator, gestureGenerator, sessionManager, messenger);
+		gestureDetector = new HandGestureDetector(handsGenerator, gestureGenerator, sessionManager, messenger);
 		
 		gestureDetector.init();
 	}

@@ -1,4 +1,5 @@
-package com.imolatech.kinect.sample.faast;
+package com.imolatech.kinect;
+
 
 
 // GesturesWatcher.java
@@ -7,7 +8,6 @@ package com.imolatech.kinect.sample.faast;
    a skeleton gesture starts (or stops)
 */
 
-public interface GesturesWatcher 
-{
+public interface GestureWatcher {
   void pose(int userID, GestureName gest, boolean isActivated);
 }

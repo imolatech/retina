@@ -35,17 +35,10 @@ package com.imolatech.kinect.sample.faast;
 import java.util.*;
 import org.OpenNI.*;
 
+import com.imolatech.kinect.GestureName;
+import com.imolatech.kinect.GestureSequences;
+import com.imolatech.kinect.GestureWatcher;
 
-
-enum GestureName {
-   HORIZ_WAVE, VERT_WAVE,                          // waving
-   HANDS_NEAR,                                     // two hands
-   LEAN_LEFT, LEAN_RIGHT, LEAN_FWD, LEAN_BACK,     // leaning
-   TURN_RIGHT, TURN_LEFT,                          // turning
-   LH_LHIP, RH_RHIP,                               // touching
-   RH_UP, RH_FWD, RH_OUT, RH_IN, RH_DOWN,          // righ hand position
-   LH_UP                                           // left hand position
-}
 
 
 public class SkeletonsGestures
@@ -56,7 +49,7 @@ public class SkeletonsGestures
   private static final float ARM_LEN = 400.0f;
 
 
-  private GesturesWatcher watcher;
+  private GestureWatcher watcher;
       // object that is notified of an gesture start/stop by calling its pose() method
 
   private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkels;
@@ -103,7 +96,7 @@ public class SkeletonsGestures
 
 
 
-  public SkeletonsGestures(GesturesWatcher aw,
+  public SkeletonsGestures(GestureWatcher aw,
             HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> uSkels,
             GestureSequences gSeqs)
   {  

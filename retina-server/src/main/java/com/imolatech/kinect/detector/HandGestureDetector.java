@@ -1,4 +1,4 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.detector;
 
 import org.OpenNI.ActiveHandEventArgs;
 import org.OpenNI.GeneralException;
@@ -13,6 +13,8 @@ import org.OpenNI.StatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.PositionInfo;
+import com.imolatech.kinect.engine.Messenger;
 import com.primesense.NITE.CircleDetector;
 import com.primesense.NITE.DirectionVelocityAngleEventArgs;
 import com.primesense.NITE.HandEventArgs;
@@ -30,9 +32,16 @@ import com.primesense.NITE.SwipeDetector;
 import com.primesense.NITE.VelocityAngleEventArgs;
 import com.primesense.NITE.WaveDetector;
 
-public class GestureDetector {
+/**
+ * Based on NITE hand gesture generators.
+ * Somehow it does not work well with the skeleton generator.
+ * Always crash.
+ * @author Wenhu
+ *
+ */
+public class HandGestureDetector {
 	private static final Logger logger = LoggerFactory
-			.getLogger(GestureDetector.class);
+			.getLogger(HandGestureDetector.class);
 	private Messenger messenger;
 	private HandsGenerator handsGenerator;
 	private GestureGenerator gestureGenerator;
@@ -40,7 +49,7 @@ public class GestureDetector {
 	// for storing current hand point info
 	private PositionInfo pi = null;
 
-	public GestureDetector(HandsGenerator handsGenerator,
+	public HandGestureDetector(HandsGenerator handsGenerator,
 			GestureGenerator gestureGenerator, SessionManager sessionManager,
 			Messenger messenger) {
 		this.handsGenerator = handsGenerator;
@@ -50,8 +59,10 @@ public class GestureDetector {
 	}
 
 	public void init() throws GeneralException {
+		logger.debug("init...");
 		addHandEvents();
 		addGestureEvents();
+		logger.debug("config nite...");
 		configNITE();
 	}
 
@@ -94,6 +105,7 @@ public class GestureDetector {
 						int id = args.getId();
 						Point3D pt = args.getPosition();
 						float time = args.getTime();
+						messenger.send("hand 1 created");
 						System.out
 								.printf("Hand %d located at (%.0f, %.0f, %.0f), at %.0f secs\n",
 										id, pt.getX(), pt.getY(), pt.getZ(),

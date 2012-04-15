@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.imolatech.kinect;
+package com.imolatech.kinect.engine;
 
 /**
  * The main application to start a websocket server and 

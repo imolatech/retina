@@ -31,9 +31,9 @@ package com.imolatech.kinect.sample.gesturetracker;
  */
 import org.OpenNI.*;
 
-import com.imolatech.kinect.LoggerMessenger;
 import com.imolatech.kinect.PositionInfo;
-import com.imolatech.kinect.UserTracker;
+import com.imolatech.kinect.detector.UserTracker;
+import com.imolatech.kinect.engine.LoggerMessenger;
 import com.primesense.NITE.*;
 
 public class GestureTracker {
