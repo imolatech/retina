@@ -42,6 +42,7 @@ import org.OpenNI.*;
 
 import com.imolatech.kinect.GestureSequences;
 import com.imolatech.kinect.GestureWatcher;
+import com.imolatech.kinect.detector.SkeletonsGestures;
 
 import java.nio.ShortBuffer;
 
