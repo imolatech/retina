@@ -31,12 +31,14 @@ package com.imolatech.kinect.sample.gesturetracker;
  */
 import org.OpenNI.*;
 
+import com.imolatech.kinect.GestureName;
+import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.HandPositionInfo;
 import com.imolatech.kinect.detector.UserTracker;
 import com.imolatech.kinect.engine.LoggerMessenger;
 import com.primesense.NITE.*;
 
-public class GestureTracker {
+public class GestureTracker implements GestureWatcher {
 	// OpenNI and NITE vars
 	private Context context;
 	private SessionManager sessionMan;
@@ -94,7 +96,7 @@ public class GestureTracker {
 			context.setGlobalMirror(true); // set mirror mode
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
-			userTracker = new UserTracker(userGenerator, depthGenerator, new LoggerMessenger());
+			userTracker = new UserTracker(userGenerator, depthGenerator, new LoggerMessenger(), this);
 			userTracker.init();
 						
 			HandsGenerator handsGen = HandsGenerator.create(context); // OpenNI
@@ -146,6 +148,17 @@ public class GestureTracker {
 		}
 	} // end of configNITE()
 
+	// ------------GesturesWatcher.pose() -----------------------------
+
+	// called by the gesture detectors
+	public void pose(int userID, GestureName gest, boolean isActivated) {
+		if (isActivated)
+			System.out.println(gest + " " + userID + " on");
+		else
+			System.out.println("                        " + gest + " " + userID
+					+ " off");
+	} // end of pose()
+	
 	// -------- set event processing callbacks -------------------------
 
 	private void setHandEvents(HandsGenerator handsGen)

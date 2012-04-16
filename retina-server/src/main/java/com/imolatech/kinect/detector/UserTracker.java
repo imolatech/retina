@@ -16,6 +16,9 @@ import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.GestureSequences;
+import com.imolatech.kinect.GestureWatcher;
+import com.imolatech.kinect.engine.KinectEngine;
 import com.imolatech.kinect.engine.Messenger;
 import com.imolatech.kinect.serializer.LostUserSerializer;
 import com.imolatech.kinect.serializer.MotionDataSerializer;
@@ -37,21 +40,27 @@ public class UserTracker {
 
 	private String calibPoseName = null;
 	private TrackedUsersSerializer serializer = new TrackedUsersSerializer();
-	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
-	
 	// was SkeletonJointTransformation
 	/*
 	 * userSkels maps user IDs --> a joints map (i.e. a skeleton) skeleton maps
 	 * joints --> positions (was positions + orientations)
 	 */
+	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
+	private GestureSequences gestureSequences;
+	private SkeletonsGestures skeletonGestures;
+	
 
-	public UserTracker(UserGenerator userGen, DepthGenerator depthGen, Messenger messenger) {
+	public UserTracker(UserGenerator userGen, DepthGenerator depthGen,
+			Messenger messenger, GestureWatcher gestureWatcher) {
 		this.userGenerator = userGen;
 		this.depthGenerator = depthGen;
 		this.messenger = messenger;
 		
 		userSkeletons = new HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>>();
-	} // end of Skeletons()
+		// create the two gesture detectors, and tell them who to notify (NEW)
+		gestureSequences = new GestureSequences(gestureWatcher);
+		skeletonGestures = new SkeletonsGestures(gestureWatcher, userSkeletons, gestureSequences);
+	} 
 
 	public boolean isUpdating() {
 		return updating;
@@ -99,8 +108,11 @@ public class UserTracker {
 				if (skeletonCapability.isSkeletonCalibrating(userId))
 					continue; // test to avoid occassional crashes with
 								// isSkeletonTracking()
-				if (skeletonCapability.isSkeletonTracking(userId))
+				if (skeletonCapability.isSkeletonTracking(userId)) {
 					updateJoints(userId);
+				}
+				gestureSequences.checkSeqs(userId);
+				skeletonGestures.checkGests(userId);
 			}
 			//now we need to convert userSkeletons to json and send skeleton data to client
 			serializer.setUsersSkeletons(userSkeletons);//do not new object,should reuse the serializer
@@ -215,9 +227,11 @@ public class UserTracker {
 	class LostUserObserver implements IObserver<UserEventArgs> {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
-			logger.debug("Lost track of user {}", args.getId());
-			userSkeletons.remove(args.getId()); // remove user from userSkels
-			MotionDataSerializer serializer = new LostUserSerializer(args.getId());
+			int userId = args.getId();
+			logger.debug("Lost track of user {}", userId);
+			userSkeletons.remove(userId); // remove user from userSkels
+			gestureSequences.removeUser(userId);
+			MotionDataSerializer serializer = new LostUserSerializer(userId);
 			messenger.send(serializer.toJson());
 		}
 	} // end of LostUserObserver inner class
@@ -242,26 +256,27 @@ public class UserTracker {
 		public void update(
 				IObservable<CalibrationProgressEventArgs> observable,
 				CalibrationProgressEventArgs args) {
-			int userID = args.getUser();
-			logger.debug("Calibration status: {} for user {}",args.getStatus(), userID);
+			int userId = args.getUser();
+			logger.debug("Calibration status: {} for user {}",args.getStatus(), userId);
 			try {
 				if (args.getStatus() == CalibrationProgressStatus.OK) {
 					// calibration succeeeded; move to skeleton tracking
-					logger.debug("Starting to track user {}", userID);
-					skeletonCapability.startTracking(userID);
+					logger.debug("Starting to track user {}", userId);
+					skeletonCapability.startTracking(userId);
 					userSkeletons
-							.put(new Integer(userID),
+							.put(new Integer(userId),
 									new HashMap<SkeletonJoint, SkeletonJointPosition>());
-					// create new skeleton map for the user in userSkels
-				} else
+					gestureSequences.addUser(userId);
+				} else {
 					// calibration failed; return to pose detection
-					poseDetectionCapability.startPoseDetection(calibPoseName, userID); // big-S
-																				// ?
+					poseDetectionCapability.startPoseDetection(calibPoseName, userId); // big-S
+				}
+																				
 			} catch (StatusException e) {
 				logger.warn("Error while completing calibration.", e);
 			}
 		}
 	} // end of CalibrationCompleteObserver inner class
 
-} // end of Skeletons class
+} 
 

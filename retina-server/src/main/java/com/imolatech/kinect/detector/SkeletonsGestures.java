@@ -1,4 +1,4 @@
-package com.imolatech.kinect.sample.faast;
+package com.imolatech.kinect.detector;
 
 
 // SkeletonsGestures.java
