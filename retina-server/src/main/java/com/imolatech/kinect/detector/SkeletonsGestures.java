@@ -40,7 +40,11 @@ import com.imolatech.kinect.GestureSequences;
 import com.imolatech.kinect.GestureWatcher;
 
 
-
+/**
+ * @deprecated
+ * @author Wenhu
+ *
+ */
 public class SkeletonsGestures
 {
   // standard skeleton lengths 

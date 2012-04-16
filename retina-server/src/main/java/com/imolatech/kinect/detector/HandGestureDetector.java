@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.imolatech.kinect.HandPositionInfo;
-import com.imolatech.kinect.engine.Messenger;
+import com.imolatech.kinect.MessageDispatcher;
 import com.primesense.NITE.CircleDetector;
 import com.primesense.NITE.DirectionVelocityAngleEventArgs;
 import com.primesense.NITE.HandEventArgs;
@@ -42,7 +42,7 @@ import com.primesense.NITE.WaveDetector;
 public class HandGestureDetector {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HandGestureDetector.class);
-	private Messenger messenger;
+	private MessageDispatcher messenger;
 	private HandsGenerator handsGenerator;
 	private GestureGenerator gestureGenerator;
 	private SessionManager sessionManager;
@@ -51,7 +51,7 @@ public class HandGestureDetector {
 
 	public HandGestureDetector(HandsGenerator handsGenerator,
 			GestureGenerator gestureGenerator, SessionManager sessionManager,
-			Messenger messenger) {
+			MessageDispatcher messenger) {
 		this.handsGenerator = handsGenerator;
 		this.gestureGenerator = gestureGenerator;
 		this.messenger = messenger;
@@ -105,7 +105,7 @@ public class HandGestureDetector {
 						int id = args.getId();
 						Point3D pt = args.getPosition();
 						float time = args.getTime();
-						messenger.send("hand 1 created");
+						messenger.dispatch("hand 1 created");
 						System.out
 								.printf("Hand %d located at (%.0f, %.0f, %.0f), at %.0f secs\n",
 										id, pt.getX(), pt.getY(), pt.getZ(),

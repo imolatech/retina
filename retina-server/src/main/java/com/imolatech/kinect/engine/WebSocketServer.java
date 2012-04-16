@@ -20,11 +20,13 @@ import org.jwebsocket.token.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.MessageDispatcher;
+
 /**
  *
  * @author Wenhu
  */
-public class WebSocketServer implements WebSocketServerTokenListener, Messenger {
+public class WebSocketServer implements WebSocketServerTokenListener, MessageDispatcher {
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private TokenServer tokenServer;
     private KinectEngine engine;
@@ -101,7 +103,7 @@ public class WebSocketServer implements WebSocketServerTokenListener, Messenger 
     }
     
     //suppose message coming in is in json format
-    public void send(String message) {
+    public void dispatch(String message) {
     	if (StringUtils.isBlank(message)) return;
     	Map<String, WebSocketConnector> connectorMap = getTokenServer().getAllConnectors();
     	Collection<WebSocketConnector> connectors = connectorMap.values();
