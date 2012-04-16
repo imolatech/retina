@@ -35,7 +35,7 @@ import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.HandPositionInfo;
 import com.imolatech.kinect.detector.UserTracker;
-import com.imolatech.kinect.engine.LoggerMessenger;
+import com.imolatech.kinect.engine.LoggerMessageDispatcher;
 import com.primesense.NITE.*;
 
 public class GestureTracker implements GestureWatcher {
@@ -96,7 +96,7 @@ public class GestureTracker implements GestureWatcher {
 			context.setGlobalMirror(true); // set mirror mode
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
-			userTracker = new UserTracker(userGenerator, depthGenerator, new LoggerMessenger(), this);
+			userTracker = new UserTracker(userGenerator, depthGenerator, new LoggerMessageDispatcher(), this);
 			userTracker.init();
 						
 			HandsGenerator handsGen = HandsGenerator.create(context); // OpenNI

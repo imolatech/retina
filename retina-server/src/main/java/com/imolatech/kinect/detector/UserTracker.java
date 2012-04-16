@@ -18,16 +18,20 @@ import org.slf4j.LoggerFactory;
 
 import com.imolatech.kinect.GestureSequences;
 import com.imolatech.kinect.GestureWatcher;
-import com.imolatech.kinect.engine.KinectEngine;
-import com.imolatech.kinect.engine.Messenger;
+import com.imolatech.kinect.MessageDispatcher;
 import com.imolatech.kinect.serializer.LostUserSerializer;
 import com.imolatech.kinect.serializer.MotionDataSerializer;
 import com.imolatech.kinect.serializer.NewUserSerializer;
 import com.imolatech.kinect.serializer.TrackedUsersSerializer;
 
+/**
+ * @deprecated
+ * @author Wenhu
+ *
+ */
 public class UserTracker {
 	private static final Logger logger = LoggerFactory.getLogger(UserTracker.class);
-	private Messenger messenger;
+	private MessageDispatcher messenger;
 	// OpenNI
 	private UserGenerator userGenerator;
 	private DepthGenerator depthGenerator;
@@ -51,7 +55,7 @@ public class UserTracker {
 	
 
 	public UserTracker(UserGenerator userGen, DepthGenerator depthGen,
-			Messenger messenger, GestureWatcher gestureWatcher) {
+			MessageDispatcher messenger, GestureWatcher gestureWatcher) {
 		this.userGenerator = userGen;
 		this.depthGenerator = depthGen;
 		this.messenger = messenger;
@@ -116,7 +120,7 @@ public class UserTracker {
 			}
 			//now we need to convert userSkeletons to json and send skeleton data to client
 			serializer.setUsersSkeletons(userSkeletons);//do not new object,should reuse the serializer
-			messenger.send(serializer.toJson());
+			messenger.dispatch(serializer.toJson());
 		} catch (Exception e) {
 			logger.warn("Error while receiving data from kinect.", e);
 		}
@@ -210,7 +214,7 @@ public class UserTracker {
 				UserEventArgs args) {
 			MotionDataSerializer serializer = new NewUserSerializer(args.getId());
 			
-			messenger.send(serializer.toJson());
+			messenger.dispatch(serializer.toJson());
 			logger.debug("Detected new user {}", args.getId());
 			try {
 				// try to detect a pose for the new user
@@ -232,7 +236,7 @@ public class UserTracker {
 			userSkeletons.remove(userId); // remove user from userSkels
 			gestureSequences.removeUser(userId);
 			MotionDataSerializer serializer = new LostUserSerializer(userId);
-			messenger.send(serializer.toJson());
+			messenger.dispatch(serializer.toJson());
 		}
 	} // end of LostUserObserver inner class
 

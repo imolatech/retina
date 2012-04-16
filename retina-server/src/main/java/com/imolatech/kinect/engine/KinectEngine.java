@@ -6,7 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
+import com.imolatech.kinect.MessageDispatcher;
+import com.imolatech.kinect.detector.FullBodyGestureDetector;
 import com.imolatech.kinect.detector.HandGestureDetector;
+import com.imolatech.kinect.detector.SkeletonDetector;
+import com.imolatech.kinect.detector.UserDetector;
 import com.imolatech.kinect.detector.UserTracker;
 import com.primesense.NITE.SessionManager;
 
@@ -17,14 +21,17 @@ public class KinectEngine implements Runnable, GestureWatcher {
 	private Context context; // OPENNI
 	private SessionManager sessionManager; // NITE
 	// tracking users and their skeletons
+	private UserDetector userDetector;
+	private FullBodyGestureDetector fullBodyGestureDetector;
 	private UserTracker userTracker;
+	private SkeletonDetector skeletonDetector;
 	private HandGestureDetector gestureDetector;
 	private long totalTime = 0;
-	private Messenger messenger;
+	private MessageDispatcher dispatcher;
 	private boolean runGestureDetector = false;
 
-	public KinectEngine(Messenger messenger) {
-		this.messenger = messenger;
+	public KinectEngine(MessageDispatcher dispatcher) {
+		this.dispatcher = dispatcher;
 	}
 
 	public boolean start() {
@@ -65,10 +72,21 @@ public class KinectEngine implements Runnable, GestureWatcher {
 
 			context.setGlobalMirror(true); // set mirror mode
 			UserGenerator userGenerator = UserGenerator.create(context);
-
-			userTracker = new UserTracker(userGenerator, depthGenerator,
-					messenger, this);
-			userTracker.init();
+			
+			userDetector = new UserDetector(userGenerator, dispatcher);
+			userDetector.init();
+			
+			skeletonDetector = new SkeletonDetector(userGenerator, depthGenerator, dispatcher);
+			skeletonDetector.register(userDetector);
+			
+			skeletonDetector.init();
+			
+			fullBodyGestureDetector = new FullBodyGestureDetector(dispatcher);
+			fullBodyGestureDetector.register(userDetector);
+			fullBodyGestureDetector.register(skeletonDetector);
+			//userTracker = new UserTracker(userGenerator, depthGenerator,
+			//		dispatcher, this);
+			//userTracker.init();
 			if (runGestureDetector) {
 				configHandGestureDetector();
 			}
@@ -85,7 +103,7 @@ public class KinectEngine implements Runnable, GestureWatcher {
 
 		sessionManager = new SessionManager(context, "Click", "RaiseHand"); // NITE
 		gestureDetector = new HandGestureDetector(handsGenerator,
-				gestureGenerator, sessionManager, messenger);
+				gestureGenerator, sessionManager, dispatcher);
 
 		gestureDetector.init();
 	}
@@ -127,7 +145,8 @@ public class KinectEngine implements Runnable, GestureWatcher {
 				return;
 			}
 			long startTime = System.currentTimeMillis();
-			userTracker.update();
+			//userTracker.update();
+			skeletonDetector.update();
 			totalTime += (System.currentTimeMillis() - startTime);
 		}
 		logger.info("Stop generating Kinect data");
