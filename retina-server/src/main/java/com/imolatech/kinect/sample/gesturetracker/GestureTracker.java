@@ -31,9 +31,9 @@ package com.imolatech.kinect.sample.gesturetracker;
  */
 import org.OpenNI.*;
 
-import com.imolatech.kinect.LoggerMessenger;
-import com.imolatech.kinect.PositionInfo;
-import com.imolatech.kinect.UserTracker;
+import com.imolatech.kinect.HandPositionInfo;
+import com.imolatech.kinect.detector.UserTracker;
+import com.imolatech.kinect.engine.LoggerMessenger;
 import com.primesense.NITE.*;
 
 public class GestureTracker {
@@ -43,7 +43,7 @@ public class GestureTracker {
 	private UserTracker userTracker;
 	private boolean isRunning = true;
 	private boolean updating = false;
-	private PositionInfo pi = null; // for storing current hand point info
+	private HandPositionInfo pi = null; // for storing current hand point info
 	private GestureGenerator gestureGen;
 	
 	public GestureTracker() {
@@ -278,7 +278,7 @@ public class GestureTracker {
 						public void update(
 								IObservable<HandEventArgs> observable,
 								HandEventArgs args) {
-							pi = new PositionInfo(args.getHand());
+							pi = new HandPositionInfo(args.getHand());
 							System.out.println(pi);
 						}
 					});
@@ -291,7 +291,7 @@ public class GestureTracker {
 								HandEventArgs args) {
 							HandPointContext handContext = args.getHand();
 							if (pi == null)
-								pi = new PositionInfo(handContext);
+								pi = new HandPositionInfo(handContext);
 							else
 								pi.update(handContext);
 							// System.out.println(pi); // commented out to

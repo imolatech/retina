@@ -1,7 +1,7 @@
 /*
  * Init a WebSocketServer and also response for initialize a kinect module.
  */
-package com.imolatech.kinect;
+package com.imolatech.kinect.engine;
 
 import java.util.Collection;
 import java.util.HashMap;

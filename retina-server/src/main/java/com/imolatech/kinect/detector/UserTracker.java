@@ -1,4 +1,4 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.detector;
 
 /* Skeletons sets up four 'observers' (listeners) so that 
  when a new user is detected in the scene, a standard pose for that 
@@ -16,6 +16,7 @@ import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.engine.Messenger;
 import com.imolatech.kinect.serializer.LostUserSerializer;
 import com.imolatech.kinect.serializer.MotionDataSerializer;
 import com.imolatech.kinect.serializer.NewUserSerializer;

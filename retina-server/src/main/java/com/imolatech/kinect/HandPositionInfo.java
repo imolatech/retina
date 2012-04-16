@@ -7,7 +7,7 @@ import org.OpenNI.*;
 import com.primesense.NITE.*;
 
 
-public class PositionInfo
+public class HandPositionInfo
 {
   private int id;         // of the hand
   private Point3D pos;    // in real-world coords (mm)
@@ -15,7 +15,7 @@ public class PositionInfo
   // private float confidence;  // don't bother storing this
 
 
-  public PositionInfo(HandPointContext hpc)
+  public HandPositionInfo(HandPointContext hpc)
   {
     id = hpc.getID();
     pos = hpc.getPosition();

@@ -1,4 +1,4 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.engine;
 
 //VersionInfo.java
 //Print OpenNI version.
