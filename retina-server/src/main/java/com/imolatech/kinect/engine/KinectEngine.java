@@ -4,13 +4,13 @@ import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.imolatech.kinect.FullBodyGestureCapturer;
 import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.MessageDispatcher;
-import com.imolatech.kinect.detector.FullBodyGestureDetector;
+import com.imolatech.kinect.SkeletonCapturer;
+import com.imolatech.kinect.UserCapturer;
 import com.imolatech.kinect.detector.HandGestureDetector;
-import com.imolatech.kinect.detector.SkeletonDetector;
-import com.imolatech.kinect.detector.UserDetector;
 import com.imolatech.kinect.detector.UserTracker;
 import com.primesense.NITE.SessionManager;
 
@@ -21,10 +21,10 @@ public class KinectEngine implements Runnable, GestureWatcher {
 	private Context context; // OPENNI
 	private SessionManager sessionManager; // NITE
 	// tracking users and their skeletons
-	private UserDetector userDetector;
-	private FullBodyGestureDetector fullBodyGestureDetector;
+	private UserCapturer userDetector;
+	private FullBodyGestureCapturer fullBodyGestureDetector;
 	private UserTracker userTracker;
-	private SkeletonDetector skeletonDetector;
+	private SkeletonCapturer skeletonDetector;
 	private HandGestureDetector gestureDetector;
 	private long totalTime = 0;
 	private MessageDispatcher dispatcher;
@@ -73,15 +73,15 @@ public class KinectEngine implements Runnable, GestureWatcher {
 			context.setGlobalMirror(true); // set mirror mode
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
-			userDetector = new UserDetector(userGenerator, dispatcher);
+			userDetector = new UserCapturer(userGenerator, dispatcher);
 			userDetector.init();
 			
-			skeletonDetector = new SkeletonDetector(userGenerator, depthGenerator, dispatcher);
+			skeletonDetector = new SkeletonCapturer(userGenerator, depthGenerator, dispatcher);
 			skeletonDetector.register(userDetector);
 			
 			skeletonDetector.init();
 			
-			fullBodyGestureDetector = new FullBodyGestureDetector(dispatcher);
+			fullBodyGestureDetector = new FullBodyGestureCapturer(dispatcher);
 			fullBodyGestureDetector.register(userDetector);
 			fullBodyGestureDetector.register(skeletonDetector);
 			//userTracker = new UserTracker(userGenerator, depthGenerator,

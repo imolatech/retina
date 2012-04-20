@@ -1,4 +1,4 @@
-package com.imolatech.kinect.detector;
+package com.imolatech.kinect;
 
 import java.util.HashMap;
 
@@ -8,15 +8,11 @@ import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.GestureName;
-import com.imolatech.kinect.GestureSequences;
-import com.imolatech.kinect.GestureWatcher;
-import com.imolatech.kinect.MessageDispatcher;
 
-public class FullBodyGestureDetector implements SkeletonObserver,
+public class FullBodyGestureCapturer implements SkeletonObserver,
 		UserObserver, GestureWatcher {
 	private static final Logger logger = LoggerFactory
-			.getLogger(FullBodyGestureDetector.class);
+			.getLogger(FullBodyGestureCapturer.class);
 	private MessageDispatcher dispatcher;
 	private GestureSequences gestureSequences;
 
@@ -56,26 +52,26 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 
 	private boolean isLeftHandUp = false; // left hand
 
-	public FullBodyGestureDetector(MessageDispatcher dispatcher) {
+	public FullBodyGestureCapturer(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		gestureSequences = new GestureSequences(this);
 	}
 	
 	// register observer for SkeletonDetector
-	public void register(SkeletonDetector detector) {
+	public void register(SkeletonCapturer detector) {
 		detector.addObserver(this);
 	}
 
-	public void unRegister(SkeletonDetector detector) {
+	public void unRegister(SkeletonCapturer detector) {
 		detector.removeObserver(this);
 	}
 	
 	// register observer for UserDetector
-	public void register(UserDetector userDetector) {
+	public void register(UserCapturer userDetector) {
 		userDetector.addObserver(this);
 	}
 
-	public void unRegister(UserDetector userDetector) {
+	public void unRegister(UserCapturer userDetector) {
 		userDetector.removeObserver(this);
 	}
 	
