@@ -111,8 +111,9 @@ public class SkeletonCapturer implements UserObserver {
 								// isSkeletonTracking()
 				if (skeletonCapability.isSkeletonTracking(userId)) {
 					updateJoints(userId);
+					notifySkeletonDataUpdate(userId);
 				}
-				notifySkeletonDataUpdate(userId);
+				
 				//gestureSequences.checkSeqs(userId);
 				//skeletonGestures.checkGests(userId);
 			}

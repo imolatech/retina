@@ -1,5 +1,7 @@
 package com.imolatech.kinect.message;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class UserInMessage extends KinectMessage {
 	private Integer userId;
 
@@ -14,5 +16,9 @@ public class UserInMessage extends KinectMessage {
 
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+	@Override
+	public String toString() {
+	    return ToStringBuilder.reflectionToString(this);
 	}
 }

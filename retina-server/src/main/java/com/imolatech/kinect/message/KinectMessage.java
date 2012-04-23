@@ -1,5 +1,7 @@
 package com.imolatech.kinect.message;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Messages we sent to client.
  * Note ns + type unique identify the message.
@@ -35,4 +37,9 @@ public abstract class KinectMessage {
 	protected void setNs(String ns) {
 		this.ns = ns;
 	}
+	@Override
+	public String toString() {
+	    return ToStringBuilder.reflectionToString(this);
+	}
+
 }

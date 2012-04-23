@@ -3,32 +3,29 @@ package com.imolatech.kinect.engine;
 import org.OpenNI.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.imolatech.kinect.FullBodyGestureCapturer;
+import com.imolatech.kinect.GestureCapturer;
 import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.MessageDispatcher;
 import com.imolatech.kinect.SkeletonCapturer;
 import com.imolatech.kinect.UserCapturer;
-import com.imolatech.kinect.detector.HandGestureDetector;
-import com.imolatech.kinect.detector.UserTracker;
-import com.primesense.NITE.SessionManager;
 
 public class KinectEngine implements Runnable, GestureWatcher {
 	private static final Logger logger = LoggerFactory
 			.getLogger(KinectEngine.class);
 	private volatile boolean running;
 	private Context context; // OPENNI
-	private SessionManager sessionManager; // NITE
+	//private SessionManager sessionManager; // NITE
 	// tracking users and their skeletons
-	private UserCapturer userDetector;
-	private FullBodyGestureCapturer fullBodyGestureDetector;
-	private UserTracker userTracker;
-	private SkeletonCapturer skeletonDetector;
-	private HandGestureDetector gestureDetector;
+	private UserCapturer userCapturer;
+	//private FullBodyGestureCapturer fullBodyGestureDetector;
+	//private UserTracker userTracker;
+	private SkeletonCapturer skeletonCapturer;
+	private GestureCapturer gestureCapture;
+	//private HandGestureDetector gestureDetector;
 	private long totalTime = 0;
 	private MessageDispatcher dispatcher;
-	private boolean runGestureDetector = false;
+	//private boolean runGestureDetector = false;
 
 	public KinectEngine(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
@@ -73,27 +70,28 @@ public class KinectEngine implements Runnable, GestureWatcher {
 			context.setGlobalMirror(true); // set mirror mode
 			UserGenerator userGenerator = UserGenerator.create(context);
 			
-			userDetector = new UserCapturer(userGenerator, dispatcher);
-			userDetector.init();
+			userCapturer = new UserCapturer(userGenerator, dispatcher);
+			userCapturer.init();
 			
-			skeletonDetector = new SkeletonCapturer(userGenerator, depthGenerator, dispatcher);
-			skeletonDetector.register(userDetector);
+			skeletonCapturer = new SkeletonCapturer(userGenerator, depthGenerator, dispatcher);
+			skeletonCapturer.register(userCapturer);
 			
-			skeletonDetector.init();
+			skeletonCapturer.init();
 			
-			fullBodyGestureDetector = new FullBodyGestureCapturer(dispatcher);
-			fullBodyGestureDetector.register(userDetector);
-			fullBodyGestureDetector.register(skeletonDetector);
+			gestureCapture = new GestureCapturer(dispatcher);
+			gestureCapture.register(userCapturer);
+			gestureCapture.register(skeletonCapturer);
 			//userTracker = new UserTracker(userGenerator, depthGenerator,
 			//		dispatcher, this);
 			//userTracker.init();
-			if (runGestureDetector) {
-				configHandGestureDetector();
-			}
+			//if (runGestureDetector) {
+			//	configHandGestureDetector();
+			//}
 		}
 
 	} // end of configOpenNI()
 
+	/* NITE hand gesture
 	private void configHandGestureDetector() throws Exception {
 		// Gesture and hands to generate gesture data
 		HandsGenerator handsGenerator = HandsGenerator.create(context); // OpenNI
@@ -107,7 +105,7 @@ public class KinectEngine implements Runnable, GestureWatcher {
 
 		gestureDetector.init();
 	}
-
+	*/
 	public long getTotalTime() {
 		return totalTime;
 	}
@@ -137,16 +135,16 @@ public class KinectEngine implements Runnable, GestureWatcher {
 		while (running) {
 			try {
 				context.waitAnyUpdateAll();
-				if (runGestureDetector) {
-					sessionManager.update(context);
-				}
+				//if (runGestureDetector) {
+				//	sessionManager.update(context);
+				//}
 			} catch (StatusException e) {
 				logger.error("Error while waiting for context.update", e);
 				return;
 			}
 			long startTime = System.currentTimeMillis();
 			//userTracker.update();
-			skeletonDetector.update();
+			skeletonCapturer.update();
 			totalTime += (System.currentTimeMillis() - startTime);
 		}
 		logger.info("Stop generating Kinect data");

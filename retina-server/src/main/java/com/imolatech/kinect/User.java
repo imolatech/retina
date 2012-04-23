@@ -2,6 +2,8 @@ package com.imolatech.kinect;
 
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class User {
 	private Integer id;
 	private String centerOfMass;
@@ -33,4 +35,9 @@ public class User {
 	public void setJoints(List<Joint> joints) {
 		this.joints = joints;
 	}
+	@Override
+	public String toString() {
+	    return ToStringBuilder.reflectionToString(this);
+	}
+
 }
