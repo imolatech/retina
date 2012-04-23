@@ -7,7 +7,7 @@ import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.imolatech.kinect.GestureContext;
+import com.imolatech.kinect.Skeleton;
 import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.SkeletonUtility;
@@ -20,7 +20,7 @@ public class FullBodyPostureDetector2  extends PostureDetector {
 		 super(watcher);
 	 }
 	 
-	 public void detectPostures(int userId, GestureContext context,
+	 public void detectPostures(int userId, Skeleton context,
 				HashMap<SkeletonJoint, SkeletonJointPosition> skeleton) {
 		 detectRightHandUp(userId, context, skeleton);
 		 //detectRightHandFwd(userId, context, skeleton);
@@ -41,7 +41,7 @@ public class FullBodyPostureDetector2  extends PostureDetector {
 	 */
 
 	// is the user's right hand at head level or above?
-	private void detectRightHandUp(int userId, GestureContext context,
+	private void detectRightHandUp(int userId, Skeleton context,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
 		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
 		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
@@ -71,7 +71,7 @@ public class FullBodyPostureDetector2  extends PostureDetector {
 	// -------------------------- left hand ----------------------------------
 
 	// is the user's left hand at head level or above?
-	private void detectLeftHandUp(int userId, GestureContext context,
+	private void detectLeftHandUp(int userId, Skeleton context,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
 		Point3D leftHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HAND);
 		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.NECK);

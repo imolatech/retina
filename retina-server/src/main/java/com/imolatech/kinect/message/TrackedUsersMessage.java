@@ -7,23 +7,21 @@ import java.util.List;
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 
-import com.imolatech.kinect.Joint;
-import com.imolatech.kinect.User;
 
 public class TrackedUsersMessage extends KinectMessage {
-	private List<User> users;
+	private List<UserSkeleton> users;
 	public TrackedUsersMessage(HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> usersSkeletons) {
 		super.type = MessageType.TRACKED_USERS;
-		users = new ArrayList<User>();
+		users = new ArrayList<UserSkeleton>();
 		for (Integer userId : usersSkeletons.keySet()) {
 			if (userId != null) {
 				users.add(buildUser(userId, usersSkeletons.get(userId)));
 			}
 		}
 	}
-	private User buildUser(Integer userId,
+	private UserSkeleton buildUser(Integer userId,
 			HashMap<SkeletonJoint, SkeletonJointPosition> joints) {
-		User user = new User();
+		UserSkeleton user = new UserSkeleton();
 		user.setId(userId);
 		//TODO need set active user.setActive(false);
 		List<Joint> result = new ArrayList<Joint>();

@@ -1,10 +1,10 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.message;
 
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class User {
+public class UserSkeleton {
 	private Integer id;
 	private String centerOfMass;
 	private boolean active;

@@ -1,4 +1,4 @@
-package com.imolatech.kinect;
+package com.imolatech.kinect.message;
 
 import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJointPosition;

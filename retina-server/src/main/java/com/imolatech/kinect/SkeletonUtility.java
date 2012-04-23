@@ -1,6 +1,6 @@
 package com.imolatech.kinect;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJoint;
@@ -22,7 +22,7 @@ public class SkeletonUtility {
 	 * get the (x, y, z) coordinate for the joint (or return null).
 	 */
 	public static Point3D getJointPosition(
-			HashMap<SkeletonJoint, SkeletonJointPosition> skel, SkeletonJoint j) {
+			Map<SkeletonJoint, SkeletonJointPosition> skel, SkeletonJoint j) {
 		SkeletonJointPosition pos = skel.get(j);
 		if (pos == null || pos.getConfidence() == 0)
 			return null;

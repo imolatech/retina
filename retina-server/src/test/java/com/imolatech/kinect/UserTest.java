@@ -13,21 +13,21 @@ import org.OpenNI.SkeletonJointPosition;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.imolatech.kinect.Joint;
-import com.imolatech.kinect.User;
+import com.imolatech.kinect.message.Joint;
+import com.imolatech.kinect.message.UserSkeleton;
 
 public class UserTest {
 
 	@Test
 	public void verifyJsonFormat() {
-		User user = buildUser();
+		UserSkeleton user = buildUser();
 		Gson gson = new Gson();
 		String expected = "{\"id\":100,\"centerOfMass\":\"centerOfMass\",\"active\":true,\"joints\":[{\"name\":\"HEAD\",\"position\":{\"X\":10.0,\"Y\":10.0,\"Z\":10.0},\"confidence\":0.8}]}";
 		assertThat(gson.toJson(user), is(equalTo(expected)));
 	}
 
-	private User buildUser() {
-		User user = new User();
+	private UserSkeleton buildUser() {
+		UserSkeleton user = new UserSkeleton();
 		user.setActive(true);
 		user.setCenterOfMass("centerOfMass");
 		user.setId(100);

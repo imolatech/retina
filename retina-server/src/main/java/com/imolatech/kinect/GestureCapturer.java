@@ -1,33 +1,50 @@
 package com.imolatech.kinect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.imolatech.kinect.posture.FullBodyPostureDetector;
-import com.imolatech.kinect.posture.FullBodyPostureDetector2;
-import com.imolatech.kinect.posture.PostureDetector;
-import com.imolatech.kinect.posture.AlgorithmicPostureDetector;
+import com.imolatech.kinect.posture.HandForwardDetectionStrategy;
+import com.imolatech.kinect.posture.HandInDetectionStrategy;
+import com.imolatech.kinect.posture.HandOutDetectionStrategy;
+import com.imolatech.kinect.posture.HandUpDetectionStrategy;
+import com.imolatech.kinect.posture.PostureDetectionStrategy;
+import com.imolatech.kinect.posture.TwoHandsNearDetectionStrategy;
 
 public class GestureCapturer implements SkeletonObserver, UserObserver,
 		GestureWatcher {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GestureCapturer.class);
 	private MessageDispatcher dispatcher;
-	private FullBodyPostureDetector postureDetector;
-	//private FullBodyPostureDetector2 postureDetector2;
-	private GestureContext gestureContext;
+	private List<PostureDetectionStrategy> postureDetectors;
+	private Skeleton skeleton;
 	
 	public GestureCapturer(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		// gestureSequences = new GestureSequences(this);
-		postureDetector = new FullBodyPostureDetector(this);
+		//postureDetector = new FullBodyPostureDetector(this);
+		initPostureDetectors();
 		//postureDetector2 = new FullBodyPostureDetector2(this);
-		gestureContext = new GestureContext();//we will reuse this object for performance reason
+		skeleton = new Skeleton();//we will reuse this object for performance reason
+	}
+
+	private void initPostureDetectors() {
+		postureDetectors = new ArrayList<PostureDetectionStrategy>();
+		postureDetectors.add(new HandUpDetectionStrategy(true, this));
+		postureDetectors.add(new HandForwardDetectionStrategy(true, this));
+		postureDetectors.add(new HandOutDetectionStrategy(true, this));
+		postureDetectors.add(new HandInDetectionStrategy(true, this));
+		postureDetectors.add(new HandUpDetectionStrategy(false, this));
+		postureDetectors.add(new HandForwardDetectionStrategy(false, this));
+		postureDetectors.add(new HandOutDetectionStrategy(false, this));
+		postureDetectors.add(new HandInDetectionStrategy(false, this));
+		postureDetectors.add(new TwoHandsNearDetectionStrategy(this));
 	}
 
 	// register observer for SkeletonDetector
@@ -65,23 +82,22 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 
 	@Override
 	public void onUpdateSkeleton(int userId,
-			HashMap<SkeletonJoint, SkeletonJointPosition> skeleton) {
+			HashMap<SkeletonJoint, SkeletonJointPosition> joints) {
 		
-		if (skeleton == null) {
+		if (joints == null) {
 			return;
 		}
 		
 		// gestureSequences.checkSeqs(userId);
-		gestureContext.calcSkelLengths(userId, skeleton);
-		// calcSkelLengths(skeleton);
+		skeleton.init(userId, joints);
 		//detectGestures(userId, skeleton);
-		detectPostures(userId, gestureContext, skeleton);
+		detectPostures(skeleton);
 	}
 
-	private void detectPostures(int userId, GestureContext context,
-			HashMap<SkeletonJoint, SkeletonJointPosition> skeleton) {
-		postureDetector.detectPostures(userId, context, skeleton);
-		//postureDetector2.detectPostures(userId, context, skeleton);
+	private void detectPostures(Skeleton skeleton) {
+		for (PostureDetectionStrategy detector : postureDetectors) {
+			detector.detect(skeleton);
+		}
 	}
 
 	public void detectGestures(int userId,
@@ -93,10 +109,12 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 
 	// called by the gesture detectors
 	public void pose(int userID, GestureName gest, boolean isActivated) {
-		if (isActivated)
+		if (isActivated) {
 			logger.debug(gest + " " + userID + " on");
-		else
+			dispatcher.dispatch("");
+		} else {
 			logger.debug("                        " + gest + " " + userID
 					+ " off");
+		}
 	}
 }
