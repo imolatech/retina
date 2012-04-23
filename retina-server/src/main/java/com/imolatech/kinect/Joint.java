@@ -2,6 +2,7 @@ package com.imolatech.kinect;
 
 import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJointPosition;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class Joint {
 	private String name;
@@ -22,5 +23,9 @@ public class Joint {
 	public void setPosition(SkeletonJointPosition position) {
 		this.position = position.getPosition();
 		this.confidence = position.getConfidence();
+	}
+	@Override
+	public String toString() {
+	    return ToStringBuilder.reflectionToString(this);
 	}
 }

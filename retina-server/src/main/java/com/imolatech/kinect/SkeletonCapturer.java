@@ -1,4 +1,4 @@
-package com.imolatech.kinect.detector;
+package com.imolatech.kinect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import org.OpenNI.StatusException;
 import org.OpenNI.UserGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.imolatech.kinect.MessageDispatcher;
 import com.imolatech.kinect.serializer.TrackedUsersSerializer;
 
 /**
@@ -22,8 +21,8 @@ import com.imolatech.kinect.serializer.TrackedUsersSerializer;
  * @author Wenhu
  *
  */
-public class SkeletonDetector implements UserObserver {
-	private static final Logger logger = LoggerFactory.getLogger(SkeletonDetector.class);
+public class SkeletonCapturer implements UserObserver {
+	private static final Logger logger = LoggerFactory.getLogger(SkeletonCapturer.class);
 	private MessageDispatcher dispatcher;
 	private List<SkeletonObserver> observers = new ArrayList<SkeletonObserver>();
 	private DepthGenerator depthGenerator;
@@ -36,7 +35,7 @@ public class SkeletonDetector implements UserObserver {
 	//joints --> positions (was positions + orientations)
 	private HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> userSkeletons;
 	
-	public SkeletonDetector(UserGenerator userGenerator, 
+	public SkeletonCapturer(UserGenerator userGenerator, 
 			DepthGenerator depthGenerator, 
 			MessageDispatcher dispatcher) {
 		this.userGenerator = userGenerator;
@@ -46,11 +45,11 @@ public class SkeletonDetector implements UserObserver {
 	} 
 	
 	// register observer for UserDetector
-	public void register(UserDetector userDetector) {
+	public void register(UserCapturer userDetector) {
 		userDetector.addObserver(this);
 	}
 
-	public void unRegister(UserDetector userDetector) {
+	public void unRegister(UserCapturer userDetector) {
 		userDetector.removeObserver(this);
 	}
 	
@@ -112,8 +111,9 @@ public class SkeletonDetector implements UserObserver {
 								// isSkeletonTracking()
 				if (skeletonCapability.isSkeletonTracking(userId)) {
 					updateJoints(userId);
+					notifySkeletonDataUpdate(userId);
 				}
-				notifySkeletonDataUpdate(userId);
+				
 				//gestureSequences.checkSeqs(userId);
 				//skeletonGestures.checkGests(userId);
 			}

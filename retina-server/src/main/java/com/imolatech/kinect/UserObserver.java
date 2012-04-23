@@ -1,4 +1,4 @@
-package com.imolatech.kinect.detector;
+package com.imolatech.kinect;
 
 public interface UserObserver {
 	void onUserIn(int userId);

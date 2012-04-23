@@ -1,4 +1,4 @@
-package com.imolatech.kinect.detector;
+package com.imolatech.kinect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,6 @@ import org.OpenNI.UserGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.MessageDispatcher;
 import com.imolatech.kinect.serializer.LostUserSerializer;
 import com.imolatech.kinect.serializer.MotionDataSerializer;
 import com.imolatech.kinect.serializer.NewUserSerializer;
@@ -29,8 +28,8 @@ import com.imolatech.kinect.serializer.NewUserSerializer;
  * @author Wenhu
  *
  */
-public class UserDetector {
-	private static final Logger logger = LoggerFactory.getLogger(UserDetector.class);
+public class UserCapturer {
+	private static final Logger logger = LoggerFactory.getLogger(UserCapturer.class);
 	private List<UserObserver> observers = new ArrayList<UserObserver>();
 	
 	private MessageDispatcher dispatcher;
@@ -43,7 +42,7 @@ public class UserDetector {
 	// to recognize when the user is in a specific position
 	private String calibPoseName = null;
 	
-	public UserDetector(UserGenerator userGen, MessageDispatcher dispatcher) {
+	public UserCapturer(UserGenerator userGen, MessageDispatcher dispatcher) {
 		this.userGenerator = userGen;
 		this.dispatcher = dispatcher;
 	} 

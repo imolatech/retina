@@ -1,4 +1,4 @@
-package com.imolatech.kinect.detector;
+package com.imolatech.kinect;
 
 import java.util.HashMap;
 
@@ -8,15 +8,11 @@ import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.GestureName;
-import com.imolatech.kinect.GestureSequences;
-import com.imolatech.kinect.GestureWatcher;
-import com.imolatech.kinect.MessageDispatcher;
 
-public class FullBodyGestureDetector implements SkeletonObserver,
+public class FullBodyGestureCapturer implements SkeletonObserver,
 		UserObserver, GestureWatcher {
 	private static final Logger logger = LoggerFactory
-			.getLogger(FullBodyGestureDetector.class);
+			.getLogger(FullBodyGestureCapturer.class);
 	private MessageDispatcher dispatcher;
 	private GestureSequences gestureSequences;
 
@@ -56,26 +52,26 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 
 	private boolean isLeftHandUp = false; // left hand
 
-	public FullBodyGestureDetector(MessageDispatcher dispatcher) {
+	public FullBodyGestureCapturer(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		gestureSequences = new GestureSequences(this);
 	}
 	
 	// register observer for SkeletonDetector
-	public void register(SkeletonDetector detector) {
+	public void register(SkeletonCapturer detector) {
 		detector.addObserver(this);
 	}
 
-	public void unRegister(SkeletonDetector detector) {
+	public void unRegister(SkeletonCapturer detector) {
 		detector.removeObserver(this);
 	}
 	
 	// register observer for UserDetector
-	public void register(UserDetector userDetector) {
+	public void register(UserCapturer userDetector) {
 		userDetector.addObserver(this);
 	}
 
-	public void unRegister(UserDetector userDetector) {
+	public void unRegister(UserCapturer userDetector) {
 		userDetector.removeObserver(this);
 	}
 	
@@ -140,51 +136,27 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	 */
 	private void calcSkelLengths(
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D neckPt = getJointPos(skel, SkeletonJoint.NECK);
-		Point3D shoulderPt = getJointPos(skel, SkeletonJoint.RIGHT_SHOULDER);
-		Point3D handPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D elbowPt = getJointPos(skel, SkeletonJoint.RIGHT_ELBOW);
+		Point3D neckPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.NECK);
+		Point3D shoulderPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_SHOULDER);
+		Point3D handPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D elbowPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_ELBOW);
 
 		if ((neckPt != null) && (shoulderPt != null) && (handPt != null)
 				&& (elbowPt != null)) {
-			neckLength = distApart(neckPt, shoulderPt); // neck to shoulder
+			neckLength = SkeletonUtility.distApart(neckPt, shoulderPt); // neck to shoulder
 														// length
 			// System.out.println("Neck Length: " + neckLength);
 
-			armLength = distApart(handPt, shoulderPt); // hand to shoulder
+			armLength = SkeletonUtility.distApart(handPt, shoulderPt); // hand to shoulder
 														// length
 			// System.out.println("Arm length: " + armLength);
 
-			lowerArmLength = distApart(handPt, elbowPt); // hand to elbow length
+			lowerArmLength = SkeletonUtility.distApart(handPt, elbowPt); // hand to elbow length
 			// System.out.println("Lower arm length: " + lowerArmLength);
 		}
 	}
 
-	/**
-	 * the Euclidian distance between the two points.
-	 */
-	private float distApart(Point3D p1, Point3D p2) {
-		float dist = (float) Math.sqrt((p1.getX() - p2.getX())
-				* (p1.getX() - p2.getX()) + (p1.getY() - p2.getY())
-				* (p1.getY() - p2.getY()) + (p1.getZ() - p2.getZ())
-				* (p1.getZ() - p2.getZ()));
-		return dist;
-	}
-
-	/**
-	 * get the (x, y, z) coordinate for the joint (or return null).
-	 */
-	private Point3D getJointPos(
-			HashMap<SkeletonJoint, SkeletonJointPosition> skel, SkeletonJoint j) {
-		SkeletonJointPosition pos = skel.get(j);
-		if (pos == null)
-			return null;
-
-		if (pos.getConfidence() == 0)
-			return null;
-
-		return pos.getPosition();
-	}
+	
 
 	// ------------GesturesWatcher.pose() -----------------------------
 
@@ -203,8 +175,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// are the user's hand close together on the x-axis?
 	private void twoHandsNear(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D leftHandPt = getJointPos(skel, SkeletonJoint.LEFT_HAND);
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D leftHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HAND);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
 		if ((leftHandPt == null) || (rightHandPt == null))
 			return;
 
@@ -228,8 +200,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's head to the left of his left hip?
 	private void leanLeft(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D leftHipPt = getJointPos(skel, SkeletonJoint.LEFT_HIP);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.HEAD);
+		Point3D leftHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HIP);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
 		if ((leftHipPt == null) || (headPt == null))
 			return;
 
@@ -249,8 +221,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's head to the right of his right hip?
 	private void leanRight(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHipPt = getJointPos(skel, SkeletonJoint.RIGHT_HIP);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.HEAD);
+		Point3D rightHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HIP);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
 		if ((rightHipPt == null) || (headPt == null))
 			return;
 
@@ -270,8 +242,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's head forward of his torso?
 	private void leanFwd(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D torsoPt = getJointPos(skel, SkeletonJoint.TORSO);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.HEAD);
+		Point3D torsoPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.TORSO);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
 		if ((torsoPt == null) || (headPt == null))
 			return;
 
@@ -294,8 +266,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's head leaning back relative to his torso?
 	private void leanBack(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D torsoPt = getJointPos(skel, SkeletonJoint.TORSO);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.HEAD);
+		Point3D torsoPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.TORSO);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
 		if ((torsoPt == null) || (headPt == null))
 			return;
 
@@ -320,8 +292,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// has the user's right hip turned forward to be in front of his left hip?
 	private void turnLeft(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHipPt = getJointPos(skel, SkeletonJoint.RIGHT_HIP);
-		Point3D leftHipPt = getJointPos(skel, SkeletonJoint.LEFT_HIP);
+		Point3D rightHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HIP);
+		Point3D leftHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HIP);
 		if ((rightHipPt == null) || (leftHipPt == null))
 			return;
 
@@ -344,8 +316,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// has the user's left hip turned forward to be in front of his right hip?
 	private void turnRight(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHipPt = getJointPos(skel, SkeletonJoint.RIGHT_HIP);
-		Point3D leftHipPt = getJointPos(skel, SkeletonJoint.LEFT_HIP);
+		Point3D rightHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HIP);
+		Point3D leftHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HIP);
 		if ((rightHipPt == null) || (leftHipPt == null))
 			return;
 
@@ -370,12 +342,12 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's left hand touching his left hip?
 	private void leftHandTouchHip(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D leftHandPt = getJointPos(skel, SkeletonJoint.LEFT_HAND);
-		Point3D leftHipPt = getJointPos(skel, SkeletonJoint.LEFT_HIP);
+		Point3D leftHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HAND);
+		Point3D leftHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HIP);
 		if ((leftHandPt == null) || (leftHipPt == null))
 			return;
 
-		float dist = distApart(leftHipPt, leftHandPt);
+		float dist = SkeletonUtility.distApart(leftHipPt, leftHandPt);
 		// System.out.println("dist: " + dist);
 
 		if (dist < neckLength) { // is touching
@@ -394,12 +366,12 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand touching his right hip?
 	private void rightHandTouchHip(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D rightHipPt = getJointPos(skel, SkeletonJoint.RIGHT_HIP);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D rightHipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HIP);
 		if ((rightHandPt == null) || (rightHipPt == null))
 			return;
 
-		float dist = distApart(rightHipPt, rightHandPt);
+		float dist = SkeletonUtility.distApart(rightHipPt, rightHandPt);
 		// System.out.println("dist: " + dist);
 
 		if (dist < neckLength) { // is touching
@@ -428,8 +400,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand at head level or above?
 	private void rightHandUp(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.HEAD);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.HEAD);
 		if ((rightHandPt == null) || (headPt == null))
 			return;
 
@@ -453,8 +425,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand forward of his right shoulder?
 	private void rightHandFwd(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D shoulderPt = getJointPos(skel, SkeletonJoint.RIGHT_SHOULDER);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D shoulderPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_SHOULDER);
 		if ((rightHandPt == null) || (shoulderPt == null))
 			return;
 
@@ -482,8 +454,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand out to the right of the his right elbow?
 	private void rightHandOut(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D elbowPt = getJointPos(skel, SkeletonJoint.RIGHT_ELBOW);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D elbowPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_ELBOW);
 		if ((rightHandPt == null) || (elbowPt == null))
 			return;
 
@@ -509,8 +481,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand inside (left) of his right elbow?
 	private void rightHandIn(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D elbowPt = getJointPos(skel, SkeletonJoint.RIGHT_ELBOW);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D elbowPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_ELBOW);
 		if ((rightHandPt == null) || (elbowPt == null))
 			return;
 
@@ -536,8 +508,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's right hand at hip level or below?
 	private void rightHandDown(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D rightHandPt = getJointPos(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D hipPt = getJointPos(skel, SkeletonJoint.RIGHT_HIP);
+		Point3D rightHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
+		Point3D hipPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HIP);
 		if ((rightHandPt == null) || (hipPt == null))
 			return;
 
@@ -563,8 +535,8 @@ public class FullBodyGestureDetector implements SkeletonObserver,
 	// is the user's left hand at head level or above?
 	private void leftHandUp(int userID,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
-		Point3D leftHandPt = getJointPos(skel, SkeletonJoint.LEFT_HAND);
-		Point3D headPt = getJointPos(skel, SkeletonJoint.NECK);
+		Point3D leftHandPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.LEFT_HAND);
+		Point3D headPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.NECK);
 		if ((leftHandPt == null) || (headPt == null))
 			return;
 
