@@ -8,7 +8,7 @@ import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.GestureContext;
+import com.imolatech.kinect.Skeleton;
 import com.imolatech.kinect.GestureWatcher;
 import com.imolatech.kinect.SkeletonUtility;
 
@@ -25,7 +25,7 @@ public class AlgorithmicPostureDetector extends PostureDetector {
 	}
 
 	@Override
-	public void detectPostures(int userId, GestureContext context,
+	public void detectPostures(int userId, Skeleton context,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skeleton) {
 		Point3D headPosition, leftHandPosition, rightHandPosition;
 		headPosition = SkeletonUtility.getJointPosition(skeleton,

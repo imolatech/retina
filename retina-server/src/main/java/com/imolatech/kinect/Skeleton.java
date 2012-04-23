@@ -1,19 +1,13 @@
 package com.imolatech.kinect;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.posture.AlgorithmicPostureDetector;
-
-public class GestureContext {
-	private static final Logger logger = LoggerFactory
-			.getLogger(GestureContext.class);
+public class Skeleton {
 	// standard skeleton lengths
 	private static final float NECK_LEN = 50.0f;
 	private static final float LOWER_ARM_LEN = 150.0f;
@@ -25,6 +19,7 @@ public class GestureContext {
 	private float lowerArmLength = LOWER_ARM_LEN; // hand to elbow length
 	private float armLength = ARM_LEN; // hand to shoulder length
 	private int userId = -1;
+	private Map<SkeletonJoint, SkeletonJointPosition> joints;
 	
 	// booleans set when gestures are being performed
 
@@ -49,6 +44,12 @@ public class GestureContext {
 	}
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+	public Map<SkeletonJoint, SkeletonJointPosition> getJoints() {
+		return joints;
+	}
+	public void setJoints(Map<SkeletonJoint, SkeletonJointPosition> joints) {
+		this.joints = joints;
 	}
 	public float getNeckLength() {
 		return neckLength;
@@ -151,6 +152,13 @@ public class GestureContext {
 	public String toString() {
 	    return ToStringBuilder.reflectionToString(this);
 	}
+	
+	public Point3D getJointPosition(SkeletonJoint joint) {
+		if (joint == null || joints == null || joints.isEmpty()) {
+			return null;
+		}
+		return SkeletonUtility.getJointPosition(joints, joint);
+	}
 
 	/**
 	 * calculate lengths between certain joint pairs for this skeleton; these
@@ -162,14 +170,15 @@ public class GestureContext {
 	 * 
 	 * @param skel
 	 */
-	public void calcSkelLengths(int userId,
-			HashMap<SkeletonJoint, SkeletonJointPosition> skel) {
+	public void init(int userId,
+			Map<SkeletonJoint, SkeletonJointPosition> joints) {
 		//if (this.userId >= 0 && this.userId == userId) return;//already detected
 		this.userId = userId;
-		Point3D neckPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.NECK);
-		Point3D shoulderPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_SHOULDER);
-		Point3D handPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_HAND);
-		Point3D elbowPt = SkeletonUtility.getJointPosition(skel, SkeletonJoint.RIGHT_ELBOW);
+		this.joints = joints;
+		Point3D neckPt = SkeletonUtility.getJointPosition(joints, SkeletonJoint.NECK);
+		Point3D shoulderPt = SkeletonUtility.getJointPosition(joints, SkeletonJoint.RIGHT_SHOULDER);
+		Point3D handPt = SkeletonUtility.getJointPosition(joints, SkeletonJoint.RIGHT_HAND);
+		Point3D elbowPt = SkeletonUtility.getJointPosition(joints, SkeletonJoint.RIGHT_ELBOW);
 
 		if ((neckPt != null) && (shoulderPt != null) && (handPt != null)
 				&& (elbowPt != null)) {

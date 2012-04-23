@@ -7,7 +7,7 @@ import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.imolatech.kinect.GestureContext;
+import com.imolatech.kinect.Skeleton;
 import com.imolatech.kinect.GestureName;
 import com.imolatech.kinect.GestureWatcher;
 
@@ -36,7 +36,7 @@ public abstract class PostureDetector {
     public void setCurrentPosture(String posture) {
     	this.previousPosture = posture;
     }
-    public abstract void detectPostures(int userId, GestureContext context,
+    public abstract void detectPostures(int userId, Skeleton context,
 			HashMap<SkeletonJoint, SkeletonJointPosition> skeleton);
     
     protected void raisePostureDetected(int userId, String posture) {
