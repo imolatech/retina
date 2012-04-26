@@ -14,6 +14,7 @@ import com.imolatech.kinect.posture.HandInDetectionStrategy;
 import com.imolatech.kinect.posture.HandOutDetectionStrategy;
 import com.imolatech.kinect.posture.HandUpDetectionStrategy;
 import com.imolatech.kinect.posture.PostureDetectionStrategy;
+import com.imolatech.kinect.posture.SequenceGesturesDetectionStrategy;
 import com.imolatech.kinect.posture.TwoHandsNearDetectionStrategy;
 import com.imolatech.kinect.serializer.UsersGesturesSerializer;
 
@@ -23,6 +24,7 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 			.getLogger(GestureCapturer.class);
 	private MessageDispatcher dispatcher;
 	private List<PostureDetectionStrategy> postureDetectors;
+	private SequenceGesturesDetectionStrategy sequenceGestureDetector;
 	private Skeleton skeleton;
 	private Map<Integer, List<GestureName>> usersGestures;
 	private UsersGesturesSerializer serializer = new UsersGesturesSerializer();
@@ -30,6 +32,7 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 		this.dispatcher = dispatcher;
 		// gestureSequences = new GestureSequences(this);
 		//postureDetector = new FullBodyPostureDetector(this);
+		sequenceGestureDetector = new SequenceGesturesDetectionStrategy(this);
 		initPostureDetectors();
 		//postureDetector2 = new FullBodyPostureDetector2(this);
 		skeleton = new Skeleton();//we will reuse this object for performance reason
@@ -71,12 +74,14 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	public void onUserIn(int userId) {
 		logger.debug("New user detected.");
 		usersGestures.put(new Integer(userId), new ArrayList<GestureName>());
+		sequenceGestureDetector.addUser(userId);
 	}
 
 	@Override
 	public void onUserOut(int userId) {
 		// gestureSequences.removeUser(userId);
 		usersGestures.remove(new Integer(userId));
+		sequenceGestureDetector.removeUser(userId);
 	}
 
 	@Override
@@ -91,9 +96,9 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 		if (joints == null) {
 			return;
 		}
-		
 		// gestureSequences.checkSeqs(userId);
 		skeleton.init(userId, joints);
+		sequenceGestureDetector.detect(skeleton);
 		//detectGestures(userId, skeleton);
 		detectPostures(skeleton);
 	}
@@ -127,7 +132,7 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 			if (canDispatchGesture(gest)) {
 				usersGestures.get(new Integer(userId)).add(gest);
 			}
-			
+			sequenceGestureDetector.addUserGesture(userId, gest);
 		} else {
 			logger.debug("                        " + gest + " " + userId
 					+ " off");
@@ -137,7 +142,8 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	private boolean canDispatchGesture(GestureName gest) {
 		return gest.equals(GestureName.LH_UP) ||
 				gest.equals(GestureName.RH_UP) ||
-				gest.equals(GestureName.HANDS_NEAR);
+				gest.equals(GestureName.HANDS_NEAR) ||
+				gest.equals(GestureName.HORIZ_WAVE);
 	}
 	
 	private boolean isUserGesturesEmpty() {
