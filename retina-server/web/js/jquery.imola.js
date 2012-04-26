@@ -111,6 +111,8 @@
 				$.imola.trigger('com.imolatech.kinect.USER_OUT',[kinectData.userId]);
 			} else if ("TRACKED_USERS" === kinectData.type) {
 				$.imola.trigger('com.imolatech.kinect.SKELETONS',[kinectData.users]);
+			} else if ("GESTURES" === kinectData.type) {
+				$.imola.trigger('com.imolatech.kinect.GESTURES',[kinectData.gestures]);
 			}
 		} else {
 			$.imola.trigger('com.imolatech.kinect.MESSAGE',[aEvt, aToken]); //message is aEvt.data
