@@ -1,6 +1,7 @@
 package com.imolatech.kinect;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,7 +79,12 @@ public class SkeletonCapturer implements UserObserver {
 	public void removeObserver(SkeletonObserver observer) {
 		observers.remove(observer);
 	}
-	
+	public void notifySkeletonsDataUpdate() {
+		if (userSkeletons.isEmpty()) return;
+		for (SkeletonObserver observer : observers) {
+			observer.onUpdateSkeletons(userSkeletons);
+		}
+	}
 	public void notifySkeletonDataUpdate(int userId) {
 		HashMap<SkeletonJoint, SkeletonJointPosition> skel = userSkeletons.get(userId);
 		if (skel == null) return;
@@ -111,12 +117,13 @@ public class SkeletonCapturer implements UserObserver {
 								// isSkeletonTracking()
 				if (skeletonCapability.isSkeletonTracking(userId)) {
 					updateJoints(userId);
-					notifySkeletonDataUpdate(userId);//or move down so we send skeletons together
+					//notifySkeletonDataUpdate(userId);//or move down so we send skeletons together
 				}
 				
 				//gestureSequences.checkSeqs(userId);
 				//skeletonGestures.checkGests(userId);
 			}
+			notifySkeletonsDataUpdate();
 			//now we need to convert userSkeletons to json and send skeleton data to client
 			serializer.setUsersSkeletons(userSkeletons);//do not new object,should reuse the serializer
 			dispatcher.dispatch(serializer.toJson());

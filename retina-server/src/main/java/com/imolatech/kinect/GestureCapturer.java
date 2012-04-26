@@ -3,19 +3,19 @@ package com.imolatech.kinect;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.SkeletonJointPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.imolatech.kinect.posture.FullBodyPostureDetector;
 import com.imolatech.kinect.posture.HandForwardDetectionStrategy;
 import com.imolatech.kinect.posture.HandInDetectionStrategy;
 import com.imolatech.kinect.posture.HandOutDetectionStrategy;
 import com.imolatech.kinect.posture.HandUpDetectionStrategy;
 import com.imolatech.kinect.posture.PostureDetectionStrategy;
 import com.imolatech.kinect.posture.TwoHandsNearDetectionStrategy;
+import com.imolatech.kinect.serializer.UsersGesturesSerializer;
 
 public class GestureCapturer implements SkeletonObserver, UserObserver,
 		GestureWatcher {
@@ -24,7 +24,9 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	private MessageDispatcher dispatcher;
 	private List<PostureDetectionStrategy> postureDetectors;
 	private Skeleton skeleton;
-	
+	private Map<Integer, List<GestureName>> usersGestures;
+	private UsersGesturesSerializer serializer = new UsersGesturesSerializer();
+	private boolean oneGestureDetected = false;
 	public GestureCapturer(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		// gestureSequences = new GestureSequences(this);
@@ -32,6 +34,7 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 		initPostureDetectors();
 		//postureDetector2 = new FullBodyPostureDetector2(this);
 		skeleton = new Skeleton();//we will reuse this object for performance reason
+		usersGestures = new HashMap<Integer, List<GestureName>>();
 	}
 
 	private void initPostureDetectors() {
@@ -68,11 +71,13 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	@Override
 	public void onUserIn(int userId) {
 		logger.debug("New user detected.");
+		usersGestures.put(new Integer(userId), new ArrayList<GestureName>());
 	}
 
 	@Override
 	public void onUserOut(int userId) {
 		// gestureSequences.removeUser(userId);
+		usersGestures.remove(new Integer(userId));
 	}
 
 	@Override
@@ -93,6 +98,15 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 		//detectGestures(userId, skeleton);
 		detectPostures(skeleton);
 	}
+	
+	@Override
+	public void onUpdateSkeletons(
+			HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> skeletons) {
+		for (Integer userId : skeletons.keySet()) {
+			onUpdateSkeleton(userId, skeletons.get(userId));
+		}
+		dispatchUserGestures();
+	}
 
 	private void detectPostures(Skeleton skeleton) {
 		for (PostureDetectionStrategy detector : postureDetectors) {
@@ -108,13 +122,28 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	// ------------GesturesWatcher.pose() -----------------------------
 
 	// called by the gesture detectors
-	public void pose(int userID, GestureName gest, boolean isActivated) {
+	public void pose(int userId, GestureName gest, boolean isActivated) {
 		if (isActivated) {
-			logger.debug(gest + " " + userID + " on");
-			dispatcher.dispatch("");
+			logger.debug(gest + " " + userId + " on");
+			usersGestures.get(new Integer(userId)).add(gest);
+			oneGestureDetected = true;
 		} else {
-			logger.debug("                        " + gest + " " + userID
+			logger.debug("                        " + gest + " " + userId
 					+ " off");
+		}
+	}
+
+	private void dispatchUserGestures() {
+		if (!oneGestureDetected) return;
+		serializer.setUsersGestures(usersGestures);
+		dispatcher.dispatch(serializer.toJson());
+		cleanUsersGestures();
+		oneGestureDetected = false;
+	}
+
+	private void cleanUsersGestures() {
+		for (Integer userId : usersGestures.keySet()) {
+			usersGestures.get(userId).clear();
 		}
 	}
 }

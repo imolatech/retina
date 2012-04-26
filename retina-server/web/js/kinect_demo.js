@@ -76,6 +76,16 @@ jQuery(function($){
 			App.drawSkeletons(App.context, App.canvas, users);
 		});
 		
+		$.imola.bind( "com.imolatech.kinect.GESTURES", function(event, gestures) {
+			$.each(gestures, function(i, gesture) {
+				$('#log-div').append('<p>User gestures,userId = ' + gesture.userId + '</p>');
+				$.each(gesture.gestures, function(j, gestureName) {
+					$('#log-div').append('<p>gesture is ' + gestureName + '</p>');
+				});
+		});
+        
+		});
+		
 		$('#stop-button').click(function() {
 			$.imola.submit(
 					"com.imolatech.kinect",

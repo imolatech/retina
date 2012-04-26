@@ -553,5 +553,12 @@ public class FullBodyGestureCapturer implements SkeletonObserver,
 		}
 	} // end of leftHandUp()
 
+	@Override
+	public void onUpdateSkeletons(
+			HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> skeletons) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }
