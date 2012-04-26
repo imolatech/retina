@@ -26,7 +26,6 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	private Skeleton skeleton;
 	private Map<Integer, List<GestureName>> usersGestures;
 	private UsersGesturesSerializer serializer = new UsersGesturesSerializer();
-	private boolean oneGestureDetected = false;
 	public GestureCapturer(MessageDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 		// gestureSequences = new GestureSequences(this);
@@ -125,20 +124,36 @@ public class GestureCapturer implements SkeletonObserver, UserObserver,
 	public void pose(int userId, GestureName gest, boolean isActivated) {
 		if (isActivated) {
 			logger.debug(gest + " " + userId + " on");
-			usersGestures.get(new Integer(userId)).add(gest);
-			oneGestureDetected = true;
+			if (canDispatchGesture(gest)) {
+				usersGestures.get(new Integer(userId)).add(gest);
+			}
+			
 		} else {
 			logger.debug("                        " + gest + " " + userId
 					+ " off");
 		}
 	}
 
+	private boolean canDispatchGesture(GestureName gest) {
+		return gest.equals(GestureName.LH_UP) ||
+				gest.equals(GestureName.RH_UP) ||
+				gest.equals(GestureName.HANDS_NEAR);
+	}
+	
+	private boolean isUserGesturesEmpty() {
+		for (Integer userId : usersGestures.keySet()) {
+			if (!usersGestures.get(userId).isEmpty()) {
+				return false;
+			}
+		}
+		return true;
+	}
 	private void dispatchUserGestures() {
-		if (!oneGestureDetected) return;
+		if (isUserGesturesEmpty()) return;
 		serializer.setUsersGestures(usersGestures);
 		dispatcher.dispatch(serializer.toJson());
 		cleanUsersGestures();
-		oneGestureDetected = false;
+		
 	}
 
 	private void cleanUsersGestures() {
